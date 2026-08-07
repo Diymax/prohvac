@@ -242,7 +242,10 @@ jobs:
       # checks below start asserting on it.
       - name: Warm up
         continue-on-error: true
-        run: curl -sS -o /dev/null -w 'прогрев: HTTP %{http_code}\n' --max-time 60 "$LIVE_URL/" || true
+        # Block scalar, not an inline `run:` — a colon followed by a space
+        # inside a plain scalar is parsed as a nested key and breaks the file.
+        run: |
+          curl -sS -o /dev/null -w 'прогрев: HTTP %{http_code}\n' --max-time 60 "$LIVE_URL/" || true
 
       # The only check that exercises the real process with the real variables
       # on the real domain. Read-only: it submits no lead and posts nothing to
