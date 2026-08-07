@@ -1,0 +1,268 @@
+name: Deploy to production
+
+# Only the release branch deploys. Everything else is covered by ci.yml.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Two deploys must never interleave: the second would flip `current` while the
+# first is still extracting. Cancelling is worse than queueing here, because a
+# cancelled deploy can leave a half-extracted directory behind.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '22.13.1'
+  # Paths as seen inside the chrooted SSH session on the Plesk host.
+  REMOTE_ROOT: /prohvac
+  KEEP_RELEASES: '5'
+  LIVE_URL: https://www.prohvac.uz
+
+jobs:
+  verify:
+    name: Verify and build release
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    outputs:
+      release_id: ${{ steps.meta.outputs.release_id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+
+      # The id sorts chronologically as plain text, which is what lets the
+      # server prune old releases with nothing but shell glob expansion —
+      # there is no `sort`, `find` or `stat` inside the chroot.
+      - name: Compute release id
+        id: meta
+        run: |
+          set -euo pipefail
+          sha="$(git rev-parse --short=12 HEAD)"
+          epoch="$(git log -1 --format=%ct HEAD)"
+          stamp="$(date -u -d "@${epoch}" +%Y%m%dT%H%M%SZ)"
+          echo "release_id=${stamp}-${sha}" >> "$GITHUB_OUTPUT"
+          echo "source_date_epoch=${epoch}" >> "$GITHUB_OUTPUT"
+
+      - run: npm run lint
+      - run: npm run verify:deployment-model
+      - run: npm test
+      - run: npm run build
+      - run: npm run smoke:migrations
+      - run: npm run smoke:production
+      # Self-contained: spawns its own app and its own Bot API stub on
+      # loopback. It never reaches api.telegram.org and never posts to the chat.
+      - run: npm run smoke:telegram
+
+      # The commit time, not 0: RELEASE_MANIFEST.json is the only record on the
+      # server of what is deployed, and a 1970 date makes it useless for
+      # answering "is the live site older than this fix?".
+      - name: Build release artifact
+        run: npm run build:release
+        env:
+          SOURCE_DATE_EPOCH: ${{ steps.meta.outputs.source_date_epoch }}
+
+      - run: npm run verify:release
+      - run: npm run smoke:release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prohvac-release-${{ steps.meta.outputs.release_id }}
+          path: release/prohvac-release.tar.gz
+          retention-days: 14
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy to prohvac.uz
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # A separate job so the deploy key lives in a protected environment and is
+    # out of scope while third-party build tooling (vite, eslint, vitest and
+    # their transitive dependencies) is executing.
+    environment:
+      name: production
+      url: https://www.prohvac.uz
+    env:
+      RELEASE_ID: ${{ needs.verify.outputs.release_id }}
+    steps:
+      # verify-live.mjs and shared/analytics.js are dependency-free, so this
+      # job needs the sources but no npm install.
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: prohvac-release-${{ needs.verify.outputs.release_id }}
+          path: release
+
+      # Secrets go through env, never interpolated into a shell body: an
+      # interpolated value is pasted as source code, so a quote or $(...) in it
+      # would execute.
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          SSH_HOST: ${{ secrets.DEPLOY_HOST }}
+          SSH_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          {
+            echo "Host prohvac"
+            echo "  HostName ${SSH_HOST}"
+            echo "  User ${SSH_USER}"
+            echo "  IdentityFile ~/.ssh/id_deploy"
+            echo "  IdentitiesOnly yes"
+            echo "  StrictHostKeyChecking yes"
+            echo "  BatchMode yes"
+            echo "  ConnectTimeout 20"
+            echo "  ServerAliveInterval 20"
+          } > ~/.ssh/config
+          chmod 600 ~/.ssh/config
+          ssh prohvac 'echo "ssh ok"'
+
+      # Captured before the flip so rollback knows where to return to.
+      # `readlink` does not exist in the chroot; `ls -ld` plus suffix stripping
+      # does the same job with an allowed binary.
+      - name: Record currently live release
+        run: |
+          set -euo pipefail
+          line="$(ssh prohvac "ls -ld '$REMOTE_ROOT/current' 2>/dev/null || true")"
+          prev="${line##*-> }"
+          echo "PREVIOUS_RELEASE=${prev##*/}" >> "$GITHUB_ENV"
+
+      # Upload to a .part name first: a connection dropped mid-transfer leaves
+      # a file the extractor never looks at. Only a completed scp earns the
+      # rename, and a rename inside one directory is atomic.
+      #
+      # scp -O forces the legacy protocol: OpenSSH 9+ defaults to SFTP, and this
+      # chroot has no sftp-server — it does have /bin/scp, which -O uses.
+      - name: Upload artifact
+        run: |
+          set -euo pipefail
+          ssh prohvac "mkdir -p '$REMOTE_ROOT/incoming' '$REMOTE_ROOT/releases'"
+          scp -O -q release/prohvac-release.tar.gz \
+            "prohvac:$REMOTE_ROOT/incoming/${RELEASE_ID}.tar.gz.part"
+          ssh prohvac "mv '$REMOTE_ROOT/incoming/${RELEASE_ID}.tar.gz.part' \
+                          '$REMOTE_ROOT/incoming/${RELEASE_ID}.tar.gz'"
+
+      - name: Extract, switch and restart
+        run: |
+          set -euo pipefail
+          bytes="$(stat -c%s release/prohvac-release.tar.gz)"
+          ssh prohvac "bash -s -- '$REMOTE_ROOT' '$RELEASE_ID' '$KEEP_RELEASES' '$bytes'" <<'REMOTE'
+          #!/bin/bash
+          # Runs inside the Plesk chroot. Available binaries only: bash cat chmod
+          # cp curl du grep gunzip gzip head id less ln ls mkdir more mv pwd rm
+          # rmdir scp sh tail tar touch unzip vi wget zip. No node, npm, git,
+          # rsync, find, sort, sed, awk, sha256sum.
+          set -euo pipefail
+          ROOT="$1"; RELEASE_ID="$2"; KEEP="$3"; EXPECTED="$4"
+          ARCHIVE="$ROOT/incoming/$RELEASE_ID.tar.gz"
+          STAGING="$ROOT/releases/.staging-$RELEASE_ID"
+          TARGET="$ROOT/releases/$RELEASE_ID"
+
+          [ -f "$ARCHIVE" ] || { echo "нет архива: $ARCHIVE" >&2; exit 1; }
+
+          # Integrity with what the chroot has: exact size plus the gzip CRC.
+          # Cryptographic verification against the manifest stays on the runner,
+          # because there is no sha256sum here.
+          actual="$(du -b "$ARCHIVE")"; actual="${actual%%[!0-9]*}"
+          [ "$actual" = "$EXPECTED" ] || { echo "размер не сошёлся: $actual вместо $EXPECTED" >&2; rm -f "$ARCHIVE"; exit 1; }
+          gzip -t "$ARCHIVE"
+
+          # Extract to staging, then move the tree in one rename, so
+          # releases/<id> is either absent or complete — never half-written.
+          rm -rf "$ROOT/releases"/.staging-* 2>/dev/null || true
+          mkdir -p "$STAGING"
+          tar -xzf "$ARCHIVE" -C "$STAGING"
+          [ -f "$STAGING/app/app.cjs" ] || { echo "в архиве нет app.cjs" >&2; exit 1; }
+          [ -d "$STAGING/app/dist" ]    || { echo "в архиве нет dist" >&2; exit 1; }
+          [ -d "$STAGING/app/public" ]  || { echo "в архиве нет public (это document root)" >&2; exit 1; }
+
+          rm -rf "$TARGET"
+          mv "$STAGING/app" "$TARGET"
+          rm -rf "$STAGING"
+          rm -f "$ARCHIVE"
+          mkdir -p "$TARGET/tmp"
+          chmod 755 "$TARGET"
+
+          # Relative target on purpose: this shell is chrooted, so an absolute
+          # path written here would be a dangling link for Passenger, which runs
+          # outside the chroot.
+          ln -sfn "releases/$RELEASE_ID" "$ROOT/current"
+
+          # Passenger restarts an application when tmp/restart.txt changes and
+          # checks on the next request. There is no systemd and no plesk CLI in
+          # the chroot, so this is the only restart mechanism available.
+          touch "$ROOT/current/tmp/restart.txt"
+          echo "current -> releases/$RELEASE_ID"
+
+          # Bash expands a glob in lexical order and release ids start with a
+          # UTC timestamp, so the oldest come first — no `sort` needed. The live
+          # release is skipped: after a rollback `current` points at an older
+          # directory that must survive.
+          cd "$ROOT/releases"
+          link="$(ls -ld "$ROOT/current")"; active="${link##*-> }"; active="${active##*/}"
+          shopt -s nullglob
+          dirs=( */ ); count=${#dirs[@]}
+          if (( count > KEEP )); then
+            for (( i = 0; i < count - KEEP; i++ )); do
+              name="${dirs[i]%/}"
+              [ "$name" = "$active" ] && continue
+              rm -rf "$ROOT/releases/$name"
+              echo "удалён старый релиз $name"
+            done
+          fi
+          # Never touched above, and that is deliberate:
+          #   $ROOT/data           — DATA_DIR (SQLite и медиа), права 700
+          #   $ROOT/production.env — копия переменных панели, права 600
+          REMOTE
+
+      # Passenger re-execs lazily, on the first request after restart.txt
+      # changes. One request now means the new process is warm before the
+      # checks below start asserting on it.
+      - name: Warm up
+        continue-on-error: true
+        run: curl -sS -o /dev/null -w 'прогрев: HTTP %{http_code}\n' --max-time 60 "$LIVE_URL/" || true
+
+      # The only check that exercises the real process with the real variables
+      # on the real domain. Read-only: it submits no lead and posts nothing to
+      # the chat.
+      - name: Verify live site
+        run: node scripts/verify-live.mjs "$LIVE_URL"
+
+      - name: Roll back on failed verification
+        if: failure() && vars.AUTO_ROLLBACK == '1' && env.PREVIOUS_RELEASE != ''
+        run: |
+          set -euo pipefail
+          echo "::warning::Проверка не прошла — возвращаю $PREVIOUS_RELEASE"
+          ssh prohvac "cd '$REMOTE_ROOT' && ln -sfn 'releases/$PREVIOUS_RELEASE' current \
+            && mkdir -p current/tmp && touch current/tmp/restart.txt && ls -ld current"
+
+      - name: Rollback instructions
+        if: failure()
+        run: |
+          echo "::error::Развёртывание ${RELEASE_ID} не удалось"
+          echo "Откат вручную:"
+          echo "  ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}"
+          echo "  cd /prohvac && ls -1 releases"
+          echo "  ln -sfn releases/${PREVIOUS_RELEASE:-<предыдущий>} current"
+          echo "  touch current/tmp/restart.txt"

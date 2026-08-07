@@ -1,0 +1,62 @@
+{
+  "name": "prohvac-landing",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13 <25"
+  },
+  "overrides": {
+    "brace-expansion": "5.0.8"
+  },
+  "scripts": {
+    "start": "node scripts/dev-all.mjs",
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "mock:telegram": "node scripts/mock-telegram.mjs",
+    "optimize:images": "node scripts/optimize-images.mjs",
+    "gc": "node scripts/admin-cli.mjs gc",
+    "build:release": "node scripts/build-release.mjs",
+    "verify:release": "node scripts/verify-release.mjs release/prohvac-release.tar.gz",
+    "verify:deployment-model": "node scripts/verify-deployment-model.mjs",
+    "smoke:migrations": "node scripts/migration-smoke.mjs",
+    "smoke:production": "node scripts/production-smoke.mjs",
+    "smoke:telegram": "node scripts/telegram-smoke.mjs",
+    "smoke:release": "node scripts/release-smoke.mjs",
+    "prepare:production": "node scripts/prepare-production.mjs",
+    "verify:live": "node scripts/verify-live.mjs",
+    "ci": "npm run lint && npm run verify:deployment-model && npm test && npm run build && npm run smoke:migrations && npm run smoke:production && npm run smoke:telegram && npm run build:release && npm run verify:release && npm run smoke:release && npm run build:source-handoff && npm run verify:source-handoff",
+    "build:source-handoff": "node scripts/build-source-handoff.mjs",
+    "verify:source-handoff": "node scripts/verify-source-handoff.mjs release/prohvac-source.tar.gz"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "3.4.2",
+    "axios": "1.18.1",
+    "i18next": "23.11.5",
+    "i18next-browser-languagedetector": "8.0.0",
+    "i18next-http-backend": "4.0.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-hook-form": "7.51.5",
+    "react-i18next": "14.1.2",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.2",
+    "@types/react-dom": "18.3.0",
+    "@vitejs/plugin-react": "6.0.4",
+    "autoprefixer": "10.5.4",
+    "eslint": "8.57.0",
+    "eslint-plugin-react": "7.34.1",
+    "eslint-plugin-react-hooks": "4.6.2",
+    "eslint-plugin-react-refresh": "0.4.7",
+    "postcss": "8.5.23",
+    "sharp": "0.35.3",
+    "tailwindcss": "3.4.19",
+    "vite": "8.1.5",
+    "vitest": "4.1.10"
+  }
+}

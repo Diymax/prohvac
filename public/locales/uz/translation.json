@@ -1,0 +1,241 @@
+{
+    "nav": {
+        "info": "Ma'lumot",
+        "about": "Biz haqimizda",
+        "projects": "Loyihalar",
+        "enterprises": "Hamkorlar",
+        "adv": "Afzalliklar",
+        "cta": "Ariza qoldirish",
+        "aria": "Asosiy navigatsiya",
+        "open": "Menyuni ochish",
+        "close": "Yopish"
+    },
+    "hero": {
+        "eyebrow": "HVAC · Toshkent · 2004 yildan beri",
+        "title": "Har qanday ob'ektda salqinlik va issiqlik — aniq hisob-kitob bo'yicha",
+        "lead": "VRF, VRV, chillerlar, ventilyatsiya va split tizimlar: loyihalash, yetkazib berish, montaj va kalit topshirish xizmati.",
+        "btnProjects": "Bizning loyihalar",
+        "btnContact": "Biz bilan bog'laning",
+        "fact1": "ob'ekt topshirilgan",
+        "fact2": "xodim",
+        "fact3": "yil bozorda"
+    },
+    "services": {
+        "h2": "Bizning afzalliklarimiz",
+        "sub": "Bitta jamoa kuchi bilan to'liq ish sikli — maslahat va uskuna tanlashdan tortib ishga tushirish va servisgacha.",
+        "consult": {
+            "title": "Bepul maslahat",
+            "desc": "Muhandislar yuklamani bepul hisoblab, ob'ektingiz uchun yechim taklif qiladi."
+        },
+        "equipment": {
+            "title": "Uskunalarni tanlash",
+            "desc": "Rasmiy brendlar: Shivaki, AUX, Toshiba, Hisense, Mitsubishi Electric."
+        },
+        "install": {
+            "title": "Montaj va servis",
+            "desc": "Har qanday murakkablikdagi isitish, ventilyatsiya va sovutish tizimlarini o'rnatish va ta'mirlash."
+        },
+        "team": {
+            "title": "20+ yillik tajribaga ega jamoa",
+            "desc": "O'z montaj brigadalarimiz va HVAC loyihalovchi muhandislarimiz."
+        }
+    },
+    "ratings": {
+        "h2": "Bizning kompaniyamizda",
+        "staff": "Xodimlar soni",
+        "objects": "Topshirilgan ob'ektlar",
+        "equipment": "Maxsus uskunalar",
+        "years": "yil bozorda"
+    },
+    "projects": {
+        "h2": "Bizning loyihalarimiz",
+        "sub": "Ob'ektda o'rnatilgan tizimlar suratlarini ko'rish uchun loyihani oching.",
+        "more": "Ob'ekt suratlarini ko'rish →",
+        "caex": {
+            "tag": "Toshkent · HVAC",
+            "title": "Markaziy Osiyo ko'rgazmasi (CAEx)",
+            "card": "Ko'rgazma markazidagi barcha tadbirlarda qulaylikni ta'minlaydigan isitish, ventilyatsiya va konditsionerlash tizimlari.",
+            "desc": "Ko'rgazma zallari uchun so'rish-puflash ventilyatsiyasi va konditsionerlash tizimlari: katta kesimli havo yo'llari, kasseta ichki bloklari va tomdagi tashqi bloklar."
+        },
+        "opera": {
+            "tag": "VRF tizimi",
+            "title": "Toshkent City Opera",
+            "card": "Ilg'or VRF tizimi tomoshabinlar va ijrochilar uchun ideal iqlim sharoitlarini yaratadi.",
+            "desc": "Tomoshabinlar zali va foyesi uchun VRF tizimi va ventilyatsiya montaji: texnik tomdagi tashqi bloklar, trassa va havo yo'llarining yashirin tarqatilishi."
+        },
+        "ramada": {
+            "tag": "Mehmonxona majmuasi",
+            "title": "ZAMIN HOTELS RAMADA",
+            "card": "VRF tizimlari va qozonxona: yuqori energiya samaradorligi va mehmonlar uchun aniq iqlim nazorati.",
+            "desc": "Nomer fondi va umumiy zonalarda VRF tizimlari, quvurlar va nasos guruhlari bilan jihozlangan Ferroli gaz qozonxonasi."
+        },
+        "school": {
+            "tag": "Shivaki · kasseta VRF",
+            "title": "Toshkentdagi Prezident maktabi",
+            "card": "O'quv binolarida Shivaki kasseta VRF tizimlari va puflash ventilyatsiyasi.",
+            "desc": "Sinf xonalarida Shivaki kasseta VRF tizimlari, rekuperatsiyali puflash ventilyatsiyasi, qavatlar bo'ylab havo yo'llarini tarqatish."
+        },
+        "yurt": {
+            "tag": "Ginnes rekordlar kitobi",
+            "title": "Qoraqalpog'istondagi O'tov",
+            "card": "Ginnesning rekordlar kitobiga kiritilgan ob'ektda Shivaki VRF tizimlari.",
+            "desc": "Gumbazli zal uchun Shivaki VRF tizimlari: chiqarilgan ramadagi tashqi bloklar, konstruksiya perimetri bo'ylab havo berish."
+        },
+        "renaissance": {
+            "tag": "AUX · VRF",
+            "title": "Renessans universiteti",
+            "card": "Universitetning o'quv va ma'muriy binolarida energiya tejamkor iqlim.",
+            "desc": "O'quv va ma'muriy binolarda AUX VRF tizimlari, fasad tomida tashqi bloklar va isitish uchun qozonxona montaji."
+        }
+    },
+    "enterprises": "Bizning hamkor kompaniyalarimiz va brendlarimiz",
+    "about": {
+        "h2": "PROHVAC — isitish, ventilyatsiya va konditsionerlash",
+        "p1": "ProHVAC — VRF, VRV, chiller tizimlari, ventilyatsiya va split konditsionerlarni o'rnatish va texnik xizmat ko'rsatish bo'yicha mutaxassis. Biz turar-joy, tijorat va sanoat ob'ektlari uchun individual iqlim nazorati yechimlarini taklif qilamiz va qulaylik, energiya samaradorligi hamda uzoq xizmat muddatini ta'minlaymiz.",
+        "p2": "Yetakchi ishlab chiqaruvchilar uskunalaridan foydalangan holda mutaxassislarimiz sifatli montaj va texnik xizmat ko'rsatishni amalga oshiradi: haroratni aniq nazorat qilish, havo sifatini yaxshilash va energiya iste'molini kamaytirish.",
+        "cta": "Loyihalar haqida batafsil",
+        "alt1": "Havo yo'llari montaji",
+        "alt2": "Fasaddagi tashqi bloklar",
+        "alt3": "Konditsionerning ichki bloki"
+    },
+    "form": {
+        "h2": "Savollar, takliflar yoki murojaatlaringiz bormi?",
+        "lead": "Ariza qoldiring — muhandis siz bilan bog'lanadi, vazifani aniqlaydi va hisob-kitob tayyorlaydi.",
+        "caption": "Qishda issiq, yozda salqin — sirkulyatsiya nazorat ostida",
+        "name": "Ismingiz",
+        "phone": "Telefon raqamingiz",
+        "message": "Xabaringiz",
+        "btn": "Yuborish",
+        "privacy": "Formani yuborish orqali ko‘rsatilgan ma’lumotlardan faqat murojaatingizga javob berish uchun foydalanishga rozilik bildirasiz.",
+        "err": {
+            "name": "Iltimos, to'g'ri ism kiriting",
+            "phone": "Iltimos, to'g'ri telefon raqamini kiriting (+998 XX XXX XX XX)",
+            "message": "Xabar juda uzun",
+            "messageRequired": "Iltimos, xabar yozing"
+        }
+    },
+    "formsent": {
+        "sending": "Yuborilmoqda…",
+        "success": "Muvaffaqiyatli yuborildi",
+        "error": "Yuborib bo'lmadi. Iltimos, qayta urinib ko'ring",
+        "validation": "To‘ldirilgan maydonlarni tekshirib, qayta urinib ko‘ring",
+        "rateLimited": "Ketma-ket juda ko'p ariza. Bir daqiqadan so'ng urinib ko'ring",
+        "notConfigured": "Ariza qabul qilish vaqtincha ishlamayapti — iltimos, qo'ng'iroq qiling",
+        "timeout": "Server o'z vaqtida javob bermadi. Qayta urinib ko'ring",
+        "tooLarge": "Xabar juda uzun",
+        "network": "Server bilan aloqa yo‘q. Ulanishni tekshiring",
+        "deliveryUnknown": "Yuborish natijasi hozircha noma’lum. Tekshirayotganimizda formani qayta yubormang."
+    },
+    "footer": {
+        "h4": "Bizning kompaniyamiz",
+        "h42": "Aloqa",
+        "projects": "Bizning loyihalarimiz",
+        "about": "Kalit topshirish asosida isitish, ventilyatsiya va konditsionerlash. Toshkent, O'zbekiston.",
+        "copyright": "© PROHVAC. Heating and air conditioning.",
+        "city": "Toshkent, O'zbekiston"
+    },
+    "lang": {
+        "label": "Interfeys tili",
+        "current": "Interfeys tili: {{lang}}",
+        "switching": "Til almashtirilmoqda…"
+    },
+    "system": {
+        "checking": "Manzil tekshirilmoqda…",
+        "loadingPanel": "Panel yuklanmoqda…",
+        "retry": "Qayta urinish",
+        "reload": "Sahifani yangilash",
+        "home": "Bosh sahifaga",
+        "notFound": {
+            "title": "Sahifa topilmadi",
+            "text": "Manzilni tekshiring yoki PROHVAC bosh sahifasiga qayting."
+        },
+        "unavailable": {
+            "title": "Panel vaqtincha ishlamayapti",
+            "text": "Boshqaruv API bilan bog'lanib bo'lmadi. Ulanishni tekshiring va qayta urinib ko'ring."
+        },
+        "chunkFailed": {
+            "title": "Panelni yuklab bo'lmadi",
+            "text": "Interfeys fayllari yangilangan bo'lishi mumkin. Sahifani yangilab, qayta urinib ko'ring."
+        },
+        "diagnostic": {
+            "summary": "Texnik ma'lumotlar",
+            "code": "Xatolik kodi",
+            "requestId": "So'rov identifikatori",
+            "time": "Vaqt",
+            "hint": "Qo'llab-quvvatlash xizmatiga murojaat qilsangiz, ushbu ma'lumotlarni yuboring."
+        }
+    },
+    "errors": {
+        "fallback": {
+            "message": "So'rovni bajarib bo'lmadi."
+        },
+        "forbidden": {
+            "message": "Bu amal uchun huquqlar yetarli emas.",
+            "action": "Kerakli huquqlarga ega administratorga murojaat qiling."
+        },
+        "unauthorized": {
+            "message": "Tizimga kirish kerak.",
+            "action": "Qaytadan kiring va amalni takrorlang."
+        },
+        "session_expired": {
+            "message": "Seans tugadi.",
+            "action": "Qaytadan kiring; takrorlashdan oldin saqlanmagan ma'lumotlarni tekshiring."
+        },
+        "must_change_password": {
+            "message": "Avval vaqtinchalik parolni almashtirish kerak.",
+            "action": "Parolni almashtirishni yakunlang va amalni takrorlang."
+        },
+        "csrf_failed": {
+            "message": "Seansning himoya tokeni eskirdi.",
+            "action": "Sahifani yangilang va amalni takrorlang."
+        },
+        "rate_limited": {
+            "message": "So'rovlar juda ko'p yuborildi.",
+            "action": "Ko'rsatilgan vaqt o'tishini kuting."
+        },
+        "validation_failed": {
+            "message": "Ba'zi maydonlar noto'g'ri to'ldirilgan.",
+            "action": "Belgilangan maydonlarni tekshiring."
+        },
+        "not_configured": {
+            "message": "Kerakli integratsiya hali sozlanmagan.",
+            "action": "Telefon orqali bog'laning yoki integratsiya sozlamalarini tekshiring."
+        },
+        "telegram_failed": {
+            "message": "Telegram xabarni qabul qilmadi.",
+            "action": "Takrorlashdan oldin integratsiya holatini tekshiring."
+        },
+        "delivery_unknown": {
+            "message": "Yetkazish natijasi hozircha noma'lum.",
+            "action": "Avtomatik qayta yubormang; avval Telegramni tekshiring."
+        },
+        "payload_too_large": {
+            "message": "Yuborilayotgan ma'lumotlar hajmi juda katta.",
+            "action": "Fayl yoki matnni kichraytirib, qayta urinib ko'ring."
+        },
+        "unsupported_media_type": {
+            "message": "Bu ma'lumot formati qo'llab-quvvatlanmaydi.",
+            "action": "Interfeysda ko'rsatilgan formatlardan birini tanlang."
+        },
+        "media_rejected": {
+            "message": "Fayl formati yoki hajmi to'g'ri kelmadi.",
+            "action": "Ruxsat etilgan hajmdagi JPEG, PNG yoki WebP rasmini yuklang."
+        },
+        "quota_exceeded": {
+            "message": "Xotirada joy qolmadi.",
+            "action": "Keraksiz fayllarni o'chirib, qayta yuklang."
+        },
+        "media_in_use": {
+            "message": "Fayl saytda ishlatilmoqda.",
+            "action": "Avval uni sahifalardan olib tashlang, so'ng o'chiring."
+        },
+        "network_error": {
+            "message": "Server bilan aloqa yo'q.",
+            "action": "Ulanishni tekshiring va qayta urinib ko'ring."
+        },
+        "server_error": {
+            "message": "Server hozircha so'rovni bajara olmaydi.",
+            "action": "Keyinroq urinib ko'ring; qo'llab-quvvatlashga murojaat qilganda so'rov identifikatorini ayting."
+        }
+    }
+}

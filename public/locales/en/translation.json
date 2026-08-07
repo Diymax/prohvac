@@ -1,0 +1,241 @@
+{
+    "nav": {
+        "info": "Information",
+        "about": "About us",
+        "projects": "Projects",
+        "enterprises": "Partners",
+        "adv": "Advantages",
+        "cta": "Request a quote",
+        "aria": "Main navigation",
+        "open": "Open menu",
+        "close": "Close"
+    },
+    "hero": {
+        "eyebrow": "HVAC · Tashkent · since 2004",
+        "title": "Cooling and heating for any facility — engineered to spec",
+        "lead": "VRF, VRV, chillers, ventilation and split systems: design, supply, installation and turnkey service.",
+        "btnProjects": "Our projects",
+        "btnContact": "Contact us",
+        "fact1": "facilities delivered",
+        "fact2": "employees",
+        "fact3": "years on the market"
+    },
+    "services": {
+        "h2": "Our advantages",
+        "sub": "A full cycle of work handled by one team — from consultation and equipment selection to commissioning and service.",
+        "consult": {
+            "title": "Free consultation",
+            "desc": "Our engineers calculate the load free of charge and propose a solution for your facility."
+        },
+        "equipment": {
+            "title": "Equipment selection",
+            "desc": "Official brands: Shivaki, AUX, Toshiba, Hisense, Mitsubishi Electric."
+        },
+        "install": {
+            "title": "Installation and service",
+            "desc": "Installation and repair of heating, ventilation and cooling systems of any complexity."
+        },
+        "team": {
+            "title": "A team with 20+ years of experience",
+            "desc": "In-house installation crews and HVAC design engineers."
+        }
+    },
+    "ratings": {
+        "h2": "At our company",
+        "staff": "Number of employees",
+        "objects": "Completed facilities",
+        "equipment": "Specialised equipment",
+        "years": "years on the market"
+    },
+    "projects": {
+        "h2": "Our projects",
+        "sub": "Open a project to see photos of the systems installed on site.",
+        "more": "View site photos →",
+        "caex": {
+            "tag": "Tashkent · HVAC",
+            "title": "Central Asian Expo (CAEx)",
+            "card": "Heating, ventilation and air conditioning systems ensuring comfort at every event of the exhibition centre.",
+            "desc": "Supply and exhaust ventilation and air conditioning for the exhibition halls: large-section ducts, cassette indoor units and rooftop outdoor units."
+        },
+        "opera": {
+            "tag": "VRF system",
+            "title": "Tashkent City Opera",
+            "card": "An advanced VRF system creates ideal climate conditions for audiences and performers.",
+            "desc": "Installation of a VRF system and ventilation for the auditorium and foyer: outdoor units on the technical roof, concealed routing of pipework and ducts."
+        },
+        "ramada": {
+            "tag": "Hotel complex",
+            "title": "ZAMIN HOTELS RAMADA",
+            "card": "VRF systems and a boiler house: high energy efficiency and precise climate control for guests.",
+            "desc": "VRF systems in guest rooms and public areas, a Ferroli gas boiler house with pipework and pump groups."
+        },
+        "school": {
+            "tag": "Shivaki · cassette VRF",
+            "title": "Presidential School in Tashkent",
+            "card": "Shivaki cassette VRF systems and supply ventilation in the academic buildings.",
+            "desc": "Shivaki cassette VRF systems in classrooms, supply ventilation with heat recovery, duct routing across the floors."
+        },
+        "yurt": {
+            "tag": "Guinness World Records",
+            "title": "Yurt in Karakalpakstan",
+            "card": "Shivaki VRF systems at a facility listed in the Guinness Book of Records.",
+            "desc": "Shivaki VRF systems for the domed hall: outdoor units on an outrigger frame, air supply around the perimeter of the structure."
+        },
+        "renaissance": {
+            "tag": "AUX · VRF",
+            "title": "Renaissance University",
+            "card": "Energy-efficient climate in the university's academic and administrative buildings.",
+            "desc": "AUX VRF systems in the academic and administrative buildings, installation of outdoor units on the facade roof and a boiler house for heating."
+        }
+    },
+    "enterprises": "Our partner companies and brands",
+    "about": {
+        "h2": "PROHVAC — heating, ventilation and air conditioning",
+        "p1": "ProHVAC is a specialist in the installation and maintenance of VRF, VRV, chiller systems, ventilation and split air conditioners. We offer tailored climate control solutions for residential, commercial and industrial facilities, ensuring comfort, energy efficiency and durability.",
+        "p2": "Using equipment from leading manufacturers, our specialists deliver high-quality installation and maintenance: precise temperature control, improved air quality and reduced energy consumption.",
+        "cta": "More about our projects",
+        "alt1": "Duct installation",
+        "alt2": "Outdoor units on the facade",
+        "alt3": "Indoor air conditioning unit"
+    },
+    "form": {
+        "h2": "Do you have any questions, suggestions or inquiries?",
+        "lead": "Leave a request — an engineer will contact you, clarify the task and prepare a quote.",
+        "caption": "Warm in winter, cool in summer — circulation under control",
+        "name": "Your name",
+        "phone": "Your phone number",
+        "message": "Your message",
+        "btn": "Send",
+        "privacy": "By submitting the form, you agree that the provided data may be used only to respond to your request.",
+        "err": {
+            "name": "Please enter a valid name",
+            "phone": "Please enter a valid phone number (+998 XX XXX XX XX)",
+            "message": "The message is too long",
+            "messageRequired": "Please add a message"
+        }
+    },
+    "formsent": {
+        "sending": "Sending…",
+        "success": "Sent successfully",
+        "error": "Could not send. Please try again",
+        "validation": "Check the completed fields and try again",
+        "rateLimited": "Too many requests in a row. Please try again in a minute",
+        "notConfigured": "Request submission is temporarily unavailable — please call us",
+        "timeout": "The server did not respond in time. Please try again",
+        "tooLarge": "The message is too long",
+        "network": "No connection to the server. Check your network",
+        "deliveryUnknown": "The delivery result is not yet known. Please do not submit again while we verify it."
+    },
+    "footer": {
+        "h4": "Our company",
+        "h42": "Contacts",
+        "projects": "Our projects",
+        "about": "Turnkey heating, ventilation and air conditioning. Tashkent, Uzbekistan.",
+        "copyright": "© PROHVAC. Heating and air conditioning.",
+        "city": "Tashkent, Uzbekistan"
+    },
+    "lang": {
+        "label": "Interface language",
+        "current": "Interface language: {{lang}}",
+        "switching": "Switching the language…"
+    },
+    "system": {
+        "checking": "Checking the address…",
+        "loadingPanel": "Loading the panel…",
+        "retry": "Try again",
+        "reload": "Reload the page",
+        "home": "Go to the home page",
+        "notFound": {
+            "title": "Page not found",
+            "text": "Check the address or return to the PROHVAC home page."
+        },
+        "unavailable": {
+            "title": "The panel is temporarily unavailable",
+            "text": "The administrative API could not be reached. Check your connection and try again."
+        },
+        "chunkFailed": {
+            "title": "The panel could not be loaded",
+            "text": "The interface files may have been updated. Reload the page and try again."
+        },
+        "diagnostic": {
+            "summary": "Technical details",
+            "code": "Error code",
+            "requestId": "Request ID",
+            "time": "Time",
+            "hint": "Share these details if you contact support."
+        }
+    },
+    "errors": {
+        "fallback": {
+            "message": "The request could not be completed."
+        },
+        "forbidden": {
+            "message": "You do not have permission for this action.",
+            "action": "Ask an administrator who has the required rights."
+        },
+        "unauthorized": {
+            "message": "You need to sign in.",
+            "action": "Sign in again and repeat the action."
+        },
+        "session_expired": {
+            "message": "The session has ended.",
+            "action": "Sign in again; check any unsaved data before you retry."
+        },
+        "must_change_password": {
+            "message": "The temporary password has to be changed first.",
+            "action": "Finish changing the password and repeat the action."
+        },
+        "csrf_failed": {
+            "message": "The security token of the session has expired.",
+            "action": "Reload the page and repeat the action."
+        },
+        "rate_limited": {
+            "message": "Too many requests in a row.",
+            "action": "Wait for the time indicated before trying again."
+        },
+        "validation_failed": {
+            "message": "Some fields are filled in incorrectly.",
+            "action": "Check the highlighted fields."
+        },
+        "not_configured": {
+            "message": "The required integration is not set up yet.",
+            "action": "Call us instead or check the integration settings."
+        },
+        "telegram_failed": {
+            "message": "Telegram did not accept the message.",
+            "action": "Check the state of the integration before retrying."
+        },
+        "delivery_unknown": {
+            "message": "The delivery result is not known yet.",
+            "action": "Do not resend automatically; check Telegram first."
+        },
+        "payload_too_large": {
+            "message": "The data being sent is too large.",
+            "action": "Make the file or the text smaller and try again."
+        },
+        "unsupported_media_type": {
+            "message": "This data format is not supported.",
+            "action": "Use one of the formats listed by the interface."
+        },
+        "media_rejected": {
+            "message": "The file was rejected because of its format or size.",
+            "action": "Upload a JPEG, PNG or WebP image within the allowed size."
+        },
+        "quota_exceeded": {
+            "message": "The storage is full.",
+            "action": "Delete unused files and upload again."
+        },
+        "media_in_use": {
+            "message": "The file is used on the site.",
+            "action": "Remove it from the pages first, then delete it."
+        },
+        "network_error": {
+            "message": "There is no connection to the server.",
+            "action": "Check your connection and try again."
+        },
+        "server_error": {
+            "message": "The server cannot handle the request right now.",
+            "action": "Try again later; give the request ID when you contact support."
+        }
+    }
+}

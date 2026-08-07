@@ -1,0 +1,1571 @@
+/* Стили админки.
+ *
+ * ОТДЕЛЬНЫЙ ФАЙЛ И ОТДЕЛЬНЫЙ ПРЕФИКС. У лендинга своя дизайн-система (pv-*)
+ * со стеклянными карточками, тенями и анимациями — она собрана под витрину.
+ * Панели нужно обратное: плотная сетка, читаемые поля, ноль движения.
+ * Смешивать их нельзя даже соблазнительно похожими кнопками: любая правка
+ * витрины начала бы двигать вёрстку форм, а любая правка форм — витрину.
+ *
+ * Отсюда два правила, которые здесь соблюдаются буквально:
+ *   1. каждый класс начинается с adm-, поэтому пересечься с pv-* невозможно;
+ *   2. ни одного правила на html, body или голые теги — только на свои классы.
+ *      Иначе стили панели, попав в общий бандл, перекрасили бы лендинг.
+ */
+
+.adm-root,
+.adm-auth,
+.adm-splash {
+  --adm-bg: #0f1419;
+  --adm-surface: #171e26;
+  --adm-surface-2: #1e2732;
+  --adm-line: #2b3745;
+  --adm-text: #e6edf3;
+  --adm-muted: #93a3b4;
+  --adm-accent: #2f81f7;
+  --adm-accent-ink: #ffffff;
+  --adm-danger: #f85149;
+  --adm-warning: #d29922;
+  /* Выполненное требование в чек-листе пароля. Отдельный цвет нужен потому,
+     что accent здесь означал бы «нажми меня», а это статус, а не действие. */
+  --adm-ok: #3fb950;
+  --adm-radius: 10px;
+
+  min-height: 100vh;
+  box-sizing: border-box;
+  background: var(--adm-bg);
+  color: var(--adm-text);
+  font-family: Manrope, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.adm-root *,
+.adm-auth *,
+.adm-splash * {
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   Заставка
+   -------------------------------------------------------------------------- */
+
+.adm-splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--adm-muted);
+}
+
+.adm-splash__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--adm-accent);
+  animation: adm-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes adm-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Уважаем системную настройку: пульсация нужна только как признак ожидания. */
+@media (prefers-reduced-motion: reduce) {
+  .adm-splash__dot {
+    animation: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Экран входа
+   -------------------------------------------------------------------------- */
+
+.adm-auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.adm-auth__card {
+  width: 100%;
+  max-width: 380px;
+  padding: 28px;
+  border: 1px solid var(--adm-line);
+  border-radius: var(--adm-radius);
+  background: var(--adm-surface);
+}
+
+.adm-auth__brand {
+  margin-bottom: 20px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--adm-muted);
+  font-size: 13px;
+}
+
+.adm-auth__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.adm-auth__hint {
+  margin: 0;
+  color: var(--adm-muted);
+  font-size: 13px;
+}
+
+.adm-auth__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+/* --------------------------------------------------------------------------
+   Каркас панели
+   -------------------------------------------------------------------------- */
+
+.adm-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--adm-line);
+  background: var(--adm-surface);
+}
+
+.adm-top__brand {
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.adm-top__brand-tail {
+  margin-left: 8px;
+  font-weight: 500;
+  letter-spacing: normal;
+  color: var(--adm-muted);
+}
+
+.adm-top__side {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.adm-top__user {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.adm-top__role {
+  padding: 2px 8px;
+  border: 1px solid var(--adm-line);
+  border-radius: 999px;
+  color: var(--adm-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.adm-top__clock {
+  color: var(--adm-muted);
+}
+
+.adm-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--adm-line);
+  background: var(--adm-surface-2);
+}
+
+.adm-nav__item {
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--adm-muted);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.adm-nav__item:hover {
+  color: var(--adm-text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.adm-nav__item--active {
+  color: var(--adm-accent-ink);
+  background: var(--adm-accent);
+}
+
+.adm-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 20px 64px;
+}
+
+/* --------------------------------------------------------------------------
+   Панель раздела
+   -------------------------------------------------------------------------- */
+
+.adm-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid var(--adm-line);
+  border-radius: var(--adm-radius);
+  background: var(--adm-surface);
+}
+
+.adm-panel__head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.adm-panel__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.adm-panel__hint,
+.adm-text {
+  margin: 0;
+  color: var(--adm-muted);
+  font-size: 14px;
+}
+
+.adm-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.adm-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Формы
+   -------------------------------------------------------------------------- */
+
+.adm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.adm-form--inline {
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.adm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.adm-field__label {
+  color: var(--adm-muted);
+  font-size: 13px;
+}
+
+.adm-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  background: var(--adm-bg);
+  color: var(--adm-text);
+  font: inherit;
+}
+
+.adm-input:focus-visible {
+  outline: 2px solid var(--adm-accent);
+  outline-offset: 1px;
+}
+
+/* Заблокированные на время сохранения поля обязаны выглядеть заблокированными:
+   без этого textarea и select во время запроса неотличимы от активных,
+   и человек продолжает печатать в поле, которое уже не принимает ввод. */
+.adm-input:disabled,
+.adm-textarea:disabled,
+.adm-select:disabled,
+.adm-file:disabled {
+  opacity: 0.6;
+}
+
+.adm-input--code {
+  max-width: 220px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 20px;
+  letter-spacing: 0.24em;
+}
+
+/* Базовая кнопка — вторичное действие: заметный, но не кричащий фон и рамка.
+   Раньше база была прозрачной (border transparent, фон не задан), и «голые»
+   .adm-btn — «Обновить», «Скачать CSV», «Назад/Вперёд», «Дослать в Telegram» —
+   выглядели как обычный текст: непонятно, кнопка это или подпись. */
+.adm-btn {
+  padding: 10px 18px;
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  background: var(--adm-surface-2);
+  color: var(--adm-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Отклик на наведение через яркость, а не border-color: иначе базовое правило
+   перекрасило бы красную рамку .adm-btn--danger в акцент при наведении. */
+.adm-btn:hover:not(:disabled) {
+  filter: brightness(1.14);
+}
+
+.adm-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.adm-btn--primary {
+  background: var(--adm-accent);
+  color: var(--adm-accent-ink);
+}
+
+.adm-btn--primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.adm-btn--ghost {
+  border-color: var(--adm-line);
+  background: transparent;
+  color: var(--adm-text);
+}
+
+.adm-btn--ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Ссылка-кнопка: семантически это действие, а не переход, поэтому <button>,
+   но выглядеть должна ссылкой. */
+.adm-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--adm-accent);
+  font: inherit;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.adm-link:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.adm-btn:focus-visible,
+.adm-link:focus-visible,
+.adm-nav__item:focus-visible {
+  outline: 2px solid var(--adm-accent);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Сообщения
+   -------------------------------------------------------------------------- */
+
+.adm-notice {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  background: var(--adm-surface-2);
+  color: var(--adm-muted);
+  font-size: 13px;
+}
+
+.adm-notice--error {
+  border-color: rgba(248, 81, 73, 0.5);
+  color: var(--adm-danger);
+}
+
+/* Успешный исход отличается от нейтрального сообщения. Без этого «сохранено»
+   и «данных нет» выглядели одинаковой серой плашкой, и подтверждения правки
+   человек просто не замечал. */
+.adm-notice--ok {
+  border-color: rgba(63, 185, 80, 0.5);
+  color: var(--adm-ok);
+}
+
+.adm-warning {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(210, 153, 34, 0.5);
+  border-radius: 8px;
+  background: rgba(210, 153, 34, 0.08);
+  color: var(--adm-warning);
+  font-size: 13px;
+}
+
+/* --------------------------------------------------------------------------
+   Второй фактор
+   -------------------------------------------------------------------------- */
+
+.adm-2fa {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.adm-2fa__qr {
+  flex: 0 0 auto;
+  padding: 12px;
+  border-radius: var(--adm-radius);
+  background: #ffffff;
+}
+
+.adm-2fa__body {
+  flex: 1 1 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Ширина в пикселях, а не в процентах: код должен оставаться крупным
+   независимо от ширины колонки, иначе телефон его не поймает. */
+.adm-qr {
+  display: block;
+  width: 208px;
+  height: 208px;
+}
+
+.adm-secret {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.adm-secret__value {
+  padding: 10px 12px;
+  border: 1px dashed var(--adm-line);
+  border-radius: 8px;
+  background: var(--adm-bg);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  /* Секрет длинный и переносить его нужно по символам, а не по «словам». */
+  word-break: break-all;
+}
+
+.adm-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 0;
+}
+
+.adm-meta dt {
+  color: var(--adm-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.adm-meta dd {
+  margin: 2px 0 0;
+  font-weight: 600;
+}
+
+.adm-codes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-codes__item {
+  padding: 10px 12px;
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  background: var(--adm-bg);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   Узкий экран
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  .adm-top,
+  .adm-nav {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .adm-main {
+    padding: 16px 12px 48px;
+  }
+
+  .adm-panel {
+    padding: 16px;
+  }
+
+  .adm-nav {
+    /* Пункты не переносим, а прокручиваем: перенос на телефоне съедает
+       треть экрана ещё до того, как показан хоть один раздел. */
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .adm-nav__item {
+    white-space: nowrap;
+  }
+}
+
+/* ===========================================================================
+   Экраны панели.
+   Каркас (шапка, меню, кнопки, поля) описан выше; ниже — разделы, которые
+   писались отдельно и своих стилей не имели: без них списки текстов, заявок
+   и медиа выводились сплошным потоком строк.
+   =========================================================================== */
+
+.adm-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.adm-screen__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.adm-screen__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.adm-muted {
+  color: var(--adm-muted);
+  font-size: 13px;
+}
+
+.adm-hint {
+  color: var(--adm-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.adm-warn {
+  color: var(--adm-warning);
+  font-size: 13px;
+}
+
+.adm-card {
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-line);
+  border-radius: var(--adm-radius);
+  padding: 16px 18px;
+}
+
+.adm-card--form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.adm-card__title {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.adm-toolbar,
+.adm-filters,
+.adm-form__actions,
+.adm-filters__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.adm-list,
+.adm-keys,
+.adm-leads,
+.adm-jobs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* --- вкладки секций --- */
+
+.adm-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.adm-tab {
+  background: transparent;
+  border: 1px solid var(--adm-line);
+  border-radius: 999px;
+  color: var(--adm-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 12px;
+}
+
+.adm-tab:hover {
+  color: var(--adm-text);
+}
+
+.adm-tab--active {
+  background: var(--adm-surface-2);
+  border-color: var(--adm-accent);
+  color: var(--adm-text);
+}
+
+/* --- ключи текстов --- */
+
+.adm-key {
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-line);
+  border-radius: var(--adm-radius);
+  overflow: hidden;
+}
+
+/* Незасохранённая правка обязана быть видна с первого взгляда: иначе человек
+   уходит со страницы, считая текст сохранённым. */
+.adm-key--dirty {
+  border-color: var(--adm-warning);
+}
+
+.adm-key__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+}
+
+.adm-key__toggle {
+  background: transparent;
+  border: 0;
+  color: var(--adm-text);
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-align: left;
+}
+
+.adm-key__name {
+  color: var(--adm-accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}
+
+.adm-key__preview {
+  color: var(--adm-muted);
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 46ch;
+}
+
+.adm-key__statuses,
+.adm-key__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.adm-key__body {
+  border-top: 1px solid var(--adm-line);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  padding: 14px;
+}
+
+.adm-key__source {
+  grid-column: 1 / -1;
+}
+
+.adm-key__targets {
+  display: contents;
+}
+
+.adm-key__foot {
+  border-top: 1px solid var(--adm-line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 14px;
+}
+
+/* --- поля --- */
+
+.adm-label {
+  color: var(--adm-muted);
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.adm-field--lang {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Поле фильтра стоит в ряд с другими, поэтому width: 100% от .adm-field
+   надо снять: иначе каждый фильтр занимает всю строку и панель разваливается
+   в столбик независимо от ширины экрана. */
+.adm-field--inline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: auto;
+  flex: 0 1 200px;
+}
+
+.adm-field__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.adm-field--dirty .adm-textarea,
+.adm-field--dirty .adm-input {
+  border-color: var(--adm-warning);
+}
+
+.adm-textarea,
+.adm-select,
+.adm-file {
+  background: var(--adm-bg);
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  color: var(--adm-text);
+  font: inherit;
+  padding: 9px 11px;
+  width: 100%;
+}
+
+.adm-textarea {
+  min-height: 76px;
+  resize: vertical;
+}
+
+.adm-textarea:focus,
+.adm-select:focus {
+  border-color: var(--adm-accent);
+}
+
+/* outline: none у :focus снимал единственный признак фокуса для клавиатуры —
+   рамка по border-color на тёмном фоне почти не видна. Правило то же, что
+   у .adm-input. */
+.adm-textarea:focus-visible,
+.adm-select:focus-visible,
+.adm-file:focus-visible {
+  outline: 2px solid var(--adm-accent);
+  outline-offset: 1px;
+}
+
+.adm-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+/* --- метки состояния --- */
+
+.adm-badge {
+  border: 1px solid var(--adm-line);
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.adm-badge--muted {
+  color: var(--adm-muted);
+}
+
+/* Цвет по смыслу состояния. Модификаторы собираются в коде из самого статуса
+   (`adm-badge--${row.status}`), и без этих правил все метки выглядели
+   одинаково серыми: «отправлено» не отличалось от «ошибка», а «спам» —
+   от «в работе». Список закрытый: он повторяет CHECK'и схемы. */
+.adm-badge--new,
+.adm-badge--in_progress,
+.adm-badge--pending,
+.adm-badge--sending,
+.adm-badge--stale,
+.adm-badge--queued,
+.adm-badge--deferred {
+  color: var(--adm-warning);
+  border-color: rgba(210, 153, 34, 0.5);
+}
+
+.adm-badge--failed,
+.adm-badge--delivery_unknown,
+.adm-badge--spam,
+.adm-badge--missing {
+  color: var(--adm-danger);
+  border-color: rgba(248, 81, 73, 0.5);
+}
+
+.adm-badge--sent,
+.adm-badge--done,
+.adm-badge--published,
+.adm-badge--manual,
+.adm-badge--active {
+  color: var(--adm-ok);
+  border-color: rgba(63, 185, 80, 0.5);
+}
+
+.adm-badge--hidden,
+.adm-badge--skipped,
+.adm-badge--machine,
+.adm-badge--imported {
+  color: var(--adm-muted);
+}
+
+/* --- кнопки-модификаторы --- */
+
+.adm-btn--danger {
+  border-color: var(--adm-danger);
+  color: var(--adm-danger);
+}
+
+.adm-btn--danger:hover:not(:disabled) {
+  background: rgba(248, 81, 73, 0.12);
+}
+
+/* Второе нажатие подтверждает удаление — цвет меняется, чтобы намерение
+   было очевидно до, а не после. */
+.adm-btn--armed {
+  background: var(--adm-danger);
+  border-color: var(--adm-danger);
+  color: #fff;
+}
+
+.adm-btn--icon {
+  line-height: 1;
+  min-width: 32px;
+  padding: 6px 9px;
+}
+
+.adm-confirm,
+.adm-order {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* --- квота --- */
+
+.adm-quota {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.adm-quota__bar {
+  background: var(--adm-bg);
+  border: 1px solid var(--adm-line);
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.adm-quota__fill {
+  background: var(--adm-accent);
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.adm-quota--warn .adm-quota__fill {
+  background: var(--adm-warning);
+}
+
+/* Уровень приходит из QuotaBar.jsx и называется 'danger'. Селектор
+   .adm-quota--full не совпадал с ним ни разу, поэтому полоса не краснела
+   даже на 99% — то есть предупреждение о кончающемся диске не работало. */
+.adm-quota--danger .adm-quota__fill {
+  background: var(--adm-danger);
+}
+
+.adm-quota__text {
+  font-size: 13px;
+}
+
+.adm-quota__note {
+  color: var(--adm-muted);
+  font-size: 12px;
+}
+
+/* --- сущности каталогов --- */
+
+.adm-entity {
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-line);
+  border-radius: var(--adm-radius);
+  padding: 12px 14px;
+}
+
+.adm-entity__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.adm-entity__thumb {
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  height: 48px;
+  object-fit: cover;
+  width: 64px;
+}
+
+.adm-entity__thumb--empty {
+  background: var(--adm-bg);
+  display: inline-block;
+}
+
+.adm-entity__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.adm-entity__title {
+  font-weight: 600;
+}
+
+.adm-entity__actions,
+.adm-media__actions,
+.adm-lead__actions,
+.adm-setting__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* --- медиа --- */
+
+.adm-media {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.adm-media__item {
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-line);
+  border-radius: var(--adm-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.adm-media__thumb {
+  border-radius: 8px;
+  height: 110px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.adm-media__thumb--empty {
+  background: var(--adm-bg);
+}
+
+.adm-media__name {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-media__info {
+  color: var(--adm-muted);
+  font-size: 12px;
+}
+
+/* Записи, у которых база и диск разошлись (Media.jsx, блок «Требуют
+   внимания»). До CR-060 секция наследовала обычную .adm-card и выглядела
+   ровно как список исправных файлов — то есть единственный блок, ради
+   которого админ сюда и заходит, ничем не выделялся.
+   Предупреждение собрано из тех же средств, что и .adm-warning: рамка и
+   подложка на --adm-warning, плюс полоса слева как якорь для взгляда.
+   Текст остаётся на --adm-text (контраст 13:1), жёлтым выделен только
+   заголовок: 6.6:1 на --adm-surface, выше порога AA. */
+.adm-media__problems {
+  display: grid;
+  gap: 12px;
+  border-color: rgba(210, 153, 34, 0.55);
+  border-left: 3px solid var(--adm-warning);
+  background:
+    linear-gradient(rgba(210, 153, 34, 0.07), rgba(210, 153, 34, 0.07)), var(--adm-surface);
+  animation: adm-attention 0.35s ease-out;
+}
+
+.adm-media__problems .adm-card__title {
+  /* Отступ снизу даёт grid-gap секции: с margin заголовок отходил вдвое. */
+  margin: 0;
+  color: var(--adm-warning);
+}
+
+/* Карточкам нужна не плитка, а строка: у проблемной записи есть причина,
+   отметка времени, текст ошибки и две кнопки — в 180px это не помещалось. */
+.adm-media--problems {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.adm-media--problems .adm-media__item {
+  background: var(--adm-surface-2);
+  border-color: rgba(210, 153, 34, 0.45);
+}
+
+@keyframes adm-attention {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Секция появляется по факту поломки, поэтому её выезд — это уведомление,
+   а не украшение. При системной настройке она просто оказывается на месте:
+   цвет и полоса слева несут тот же смысл без движения. */
+@media (prefers-reduced-motion: reduce) {
+  .adm-media__problems {
+    animation: none;
+  }
+}
+
+.adm-drop {
+  border: 1px dashed var(--adm-line);
+  border-radius: var(--adm-radius);
+  color: var(--adm-muted);
+  padding: 20px;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.adm-drop--over {
+  background: var(--adm-surface-2);
+  border-color: var(--adm-accent);
+  color: var(--adm-text);
+}
+
+/* --- очередь загрузки и перевода --- */
+
+.adm-job {
+  align-items: center;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 12px;
+}
+
+.adm-job__name {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-job__size,
+.adm-job__state,
+.adm-job__message {
+  color: var(--adm-muted);
+  font-size: 12px;
+}
+
+.adm-job__state {
+  margin-left: auto;
+}
+
+.adm-queue {
+  color: var(--adm-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 13px;
+}
+
+/* --- заявки --- */
+
+.adm-lead {
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-line);
+  border-radius: var(--adm-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px;
+}
+
+/* Шапка — строка идентификации заявки, отделённая линией от тела карточки:
+   дата, имя и телефон слева, метки статуса и доставки прижаты вправо. */
+.adm-lead__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--adm-line);
+}
+
+.adm-lead__name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Первая метка в шапке уводит себя и всё, что за ней, к правому краю. */
+.adm-lead__head .adm-badge:first-of-type {
+  margin-left: auto;
+}
+
+/* Телефон всегда слева направо: в арабской локали панели двунаправленный
+   алгоритм иначе переставляет группы цифр. Оформлен чипом-ссылкой, чтобы
+   было видно, что по нему звонят. */
+.adm-lead__phone {
+  color: var(--adm-accent);
+  direction: ltr;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  unicode-bidi: isolate;
+  padding: 2px 8px;
+  border: 1px solid var(--adm-line);
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.adm-lead__phone:hover {
+  border-color: var(--adm-accent);
+}
+
+.adm-lead__date,
+.adm-lead__meta {
+  color: var(--adm-muted);
+  font-size: 12px;
+}
+
+.adm-lead__message {
+  background: var(--adm-bg);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 8px 10px;
+  white-space: pre-wrap;
+}
+
+.adm-lead__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+/* Кнопка сохранения заметки стоит слева под полем, а не улетает к правому
+   краю карточки: общий .adm-*__actions с margin-left: auto здесь только
+   отрывал действие от поля, к которому оно относится. */
+.adm-lead__actions {
+  margin-left: 0;
+}
+
+/* Панель фильтров — ровная сетка, а не рваный перенос флексом. Поля
+   выравниваются по нижнему краю (подпись сверху, контрол снизу), кнопки
+   и чекбокс занимают собственный ряд во всю ширину. */
+.adm-screen--leads .adm-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px 14px;
+  align-items: end;
+}
+
+.adm-screen--leads .adm-filters .adm-field--inline {
+  flex: initial;
+  width: 100%;
+}
+
+/* Чекбокс без подписи-сверху ниже полей — опускаем его к их нижней кромке. */
+.adm-screen--leads .adm-filters .adm-check {
+  align-self: end;
+  padding-bottom: 10px;
+}
+
+.adm-screen--leads .adm-filters__actions {
+  grid-column: 1 / -1;
+}
+
+/* --- настройки --- */
+
+/* Группа настроек — адаптивная сетка, а не поток. Заголовок занимает всю
+   ширину и садится сверху; поля становятся в две колонки на широком экране
+   и в одну на узком. Раньше группа делила общий класс с горизонтальными
+   бакетами кнопок (flex-wrap, align-items: center), из-за чего заголовок и
+   поля вставали в один ряд и переносились рваной мозаикой. */
+.adm-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  /* Короткая карточка не должна растягиваться до высоты соседней высокой:
+     иначе поле с одним переключателем занимает столько же, сколько textarea. */
+  align-items: start;
+}
+
+.adm-group > .adm-card__title {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--adm-line);
+}
+
+/* Textarea, маршрутизация переводов и список терминов нечитаемы в половине
+   строки — они занимают весь ряд сетки. */
+.adm-setting--wide {
+  grid-column: 1 / -1;
+}
+
+.adm-setting {
+  /* На тон светлее группы (surface): вложенная карточка поля отделяется от
+     фона группы, а поля ввода внутри (bg — самый тёмный) читаются как углубления. */
+  background: var(--adm-surface-2);
+  border: 1px solid var(--adm-line);
+  border-radius: var(--adm-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+}
+
+.adm-setting__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.adm-setting__key {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: var(--adm-muted);
+  opacity: 0.7;
+}
+
+.adm-setting__editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Время правки уходит вправо, отделяясь от кнопок действия. */
+.adm-setting__actions .adm-muted:last-child {
+  margin-left: auto;
+}
+
+/* Языки перевода — компактная сетка, а не колонка с провалами по высоте. */
+.adm-routing {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Внутри сетки маршрутизации ячейка занимает свою колонку целиком: базовый
+   flex-basis 200px от .adm-field--inline здесь только мешал бы. */
+.adm-routing .adm-field--inline {
+  flex: initial;
+  width: 100%;
+}
+
+/* Секрет никогда не показывается целиком — только маска и кнопка замены. */
+.adm-secret {
+  justify-content: space-between;
+}
+
+.adm-secret__mask {
+  color: var(--adm-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+}
+
+@media (max-width: 720px) {
+  .adm-key__body {
+    grid-template-columns: 1fr;
+  }
+
+  .adm-entity__actions,
+  .adm-media__actions,
+  .adm-lead__actions,
+  .adm-setting__actions {
+    margin-left: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Смена пароля
+   --------------------------------------------------------------------------- */
+
+/* Экран-заслонка: пока пароль не сменён, панели нет вовсе, поэтому каркас
+   сводится к одной центрированной колонке без шапки и навигации. */
+.adm-root--gate {
+  display: block;
+  min-height: 100vh;
+  padding: 32px 16px;
+}
+
+.adm-root--gate .adm-main {
+  margin: 0 auto;
+  max-width: 460px;
+  padding: 0;
+}
+
+.adm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.adm-field__error {
+  color: var(--adm-danger);
+  font-size: 12px;
+}
+
+/* Требования к паролю. Показываются всегда, а не появляются после ошибки:
+   узнавать правило, уже получив отказ, — это ещё одна попытка вслепую. */
+.adm-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.adm-rules__item {
+  align-items: baseline;
+  color: var(--adm-muted);
+  display: flex;
+  font-size: 13px;
+  gap: 8px;
+}
+
+.adm-rules__item--ok {
+  color: var(--adm-ok);
+}
+
+/* Ширина фиксирована, чтобы текст требования не прыгал горизонтально
+   в момент, когда точка сменяется галкой. */
+.adm-rules__mark {
+  display: inline-block;
+  text-align: center;
+  width: 12px;
+}
+
+/* ---------------------------------------------------------------------------
+   Выбор картинки из библиотеки
+   --------------------------------------------------------------------------- */
+
+.adm-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adm-picker__bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Миниатюры выбранного видны и со свёрнутым пикером: иначе поле с номером
+   файла снова превращается в число без смысла. */
+.adm-picker__preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.adm-picker__preview img {
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  height: 56px;
+  object-fit: cover;
+  width: 56px;
+}
+
+.adm-picker__panel {
+  background: var(--adm-bg);
+  border: 1px solid var(--adm-line);
+  border-radius: var(--adm-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+}
+
+.adm-picker__panel-head {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.adm-picker__grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  list-style: none;
+  margin: 0;
+  /* Библиотека может быть на сотни файлов — панель не должна выталкивать
+     форму за пределы экрана. */
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.adm-picker__item {
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  width: 100%;
+}
+
+.adm-picker__item:hover:not(:disabled) {
+  border-color: var(--adm-accent);
+}
+
+.adm-picker__item:focus-visible {
+  outline: 2px solid var(--adm-accent);
+  outline-offset: 1px;
+}
+
+.adm-picker__item--active {
+  border-color: var(--adm-ok);
+  box-shadow: inset 0 0 0 1px var(--adm-ok);
+}
+
+.adm-picker__item img {
+  border-radius: 6px;
+  height: 64px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.adm-picker__id {
+  color: var(--adm-muted);
+  font-size: 11px;
+}
+
+.adm-overview__warnings {
+  display: grid;
+  gap: 8px;
+}
+
+.adm-overview__grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.adm-overview__metric {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adm-overview__label {
+  color: var(--adm-muted);
+  font-size: 13px;
+}
+
+.adm-overview__value {
+  font-size: clamp(20px, 3vw, 28px);
+  overflow-wrap: anywhere;
+}

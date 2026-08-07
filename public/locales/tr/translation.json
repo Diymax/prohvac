@@ -1,0 +1,241 @@
+{
+    "nav": {
+        "info": "Bilgi",
+        "about": "Hakkımızda",
+        "projects": "Projeler",
+        "enterprises": "İş ortakları",
+        "adv": "Avantajlar",
+        "cta": "Teklif isteyin",
+        "aria": "Ana gezinme",
+        "open": "Menüyü aç",
+        "close": "Kapat"
+    },
+    "hero": {
+        "eyebrow": "HVAC · Taşkent · 2004'ten beri",
+        "title": "Her tesiste serinlik ve sıcaklık — hesaba tam uygun",
+        "lead": "VRF, VRV, chiller, havalandırma ve split sistemler: projelendirme, tedarik, montaj ve anahtar teslim servis.",
+        "btnProjects": "Projelerimiz",
+        "btnContact": "Bize ulaşın",
+        "fact1": "tamamlanan tesis",
+        "fact2": "çalışan",
+        "fact3": "yıllık deneyim"
+    },
+    "services": {
+        "h2": "Avantajlarımız",
+        "sub": "Tek ekiple tam kapsamlı hizmet — danışmanlık ve ekipman seçiminden devreye alma ve servise kadar.",
+        "consult": {
+            "title": "Ücretsiz danışmanlık",
+            "desc": "Mühendislerimiz yükü ücretsiz hesaplar ve tesisinize uygun çözüm sunar."
+        },
+        "equipment": {
+            "title": "Ekipman seçimi",
+            "desc": "Resmi markalar: Shivaki, AUX, Toshiba, Hisense, Mitsubishi Electric."
+        },
+        "install": {
+            "title": "Montaj ve servis",
+            "desc": "Her zorluk derecesinde ısıtma, havalandırma ve soğutma sistemlerinin kurulumu ve onarımı."
+        },
+        "team": {
+            "title": "20+ yıl deneyimli ekip",
+            "desc": "Kendi montaj ekiplerimiz ve HVAC proje mühendislerimiz."
+        }
+    },
+    "ratings": {
+        "h2": "Şirketimizde",
+        "staff": "Çalışan sayısı",
+        "objects": "Tamamlanan tesisler",
+        "equipment": "Özel ekipman",
+        "years": "yıllık deneyim"
+    },
+    "projects": {
+        "h2": "Projelerimiz",
+        "sub": "Tesiste kurulan sistemlerin fotoğraflarını görmek için projeyi açın.",
+        "more": "Tesis fotoğraflarını gör →",
+        "caex": {
+            "tag": "Taşkent · HVAC",
+            "title": "Orta Asya Fuarı (CAEx)",
+            "card": "Fuar merkezinin tüm etkinliklerinde konfor sağlayan ısıtma, havalandırma ve iklimlendirme sistemleri.",
+            "desc": "Fuar salonları için taze hava ve egzoz havalandırması ile iklimlendirme: büyük kesitli kanallar, kaset tipi iç üniteler ve çatıdaki dış üniteler."
+        },
+        "opera": {
+            "tag": "VRF sistemi",
+            "title": "Taşkent Şehir Operası",
+            "card": "Gelişmiş VRF sistemi izleyiciler ve sanatçılar için ideal iklim koşulları oluşturur.",
+            "desc": "Seyirci salonu ve fuayesi için VRF sistemi ve havalandırma montajı: teknik çatıda dış üniteler, hatların ve kanalların gizli tesisatı."
+        },
+        "ramada": {
+            "tag": "Otel kompleksi",
+            "title": "ZAMIN HOTELS RAMADA",
+            "card": "VRF sistemleri ve kazan dairesi: yüksek enerji verimliliği ve misafirler için hassas iklim kontrolü.",
+            "desc": "Oda bloklarında ve ortak alanlarda VRF sistemleri, tesisat ve pompa gruplarıyla birlikte Ferroli doğal gaz kazan dairesi."
+        },
+        "school": {
+            "tag": "Shivaki · kaset VRF",
+            "title": "Taşkent Cumhurbaşkanlığı Okulu",
+            "card": "Eğitim binalarında Shivaki kaset tipi VRF sistemleri ve taze hava havalandırması.",
+            "desc": "Derslikler için Shivaki kaset tipi VRF sistemleri, ısı geri kazanımlı taze hava havalandırması, katlar boyunca kanal dağıtımı."
+        },
+        "yurt": {
+            "tag": "Guinness Rekorlar Kitabı",
+            "title": "Karakalpakistan'daki Yurt",
+            "card": "Guinness Rekorlar Kitabı'na giren tesiste Shivaki VRF sistemleri.",
+            "desc": "Kubbeli salon için Shivaki VRF sistemleri: konsol çerçeve üzerinde dış üniteler, yapı çevresi boyunca hava beslemesi."
+        },
+        "renaissance": {
+            "tag": "AUX · VRF",
+            "title": "Rönesans Üniversitesi",
+            "card": "Üniversitenin eğitim ve idari binalarında enerji verimli iklimlendirme.",
+            "desc": "Eğitim ve idari binalarda AUX VRF sistemleri, cephe çatısında dış ünite montajı ve ısıtma için kazan dairesi."
+        }
+    },
+    "enterprises": "İş ortağı şirketlerimiz ve markalarımız",
+    "about": {
+        "h2": "PROHVAC — ısıtma, havalandırma ve iklimlendirme",
+        "p1": "ProHVAC; VRF, VRV, chiller sistemleri, havalandırma ve split klimaların kurulumu ve bakımında uzmandır. Konut, ticari ve endüstriyel tesisler için konfor, enerji verimliliği ve uzun ömür sağlayan özel iklim kontrol çözümleri sunuyoruz.",
+        "p2": "Önde gelen üreticilerin ekipmanlarını kullanan uzmanlarımız kaliteli montaj ve bakım gerçekleştirir: hassas sıcaklık kontrolü, daha iyi hava kalitesi ve azaltılmış enerji tüketimi.",
+        "cta": "Projeler hakkında daha fazla",
+        "alt1": "Kanal montajı",
+        "alt2": "Cephedeki dış üniteler",
+        "alt3": "Klima iç ünitesi"
+    },
+    "form": {
+        "h2": "Sorularınız, önerileriniz veya talepleriniz mi var?",
+        "lead": "Talep bırakın — bir mühendis sizinle iletişime geçip işi netleştirecek ve teklif hazırlayacak.",
+        "caption": "Kışın sıcak, yazın serin — sirkülasyon kontrol altında",
+        "name": "Adınız",
+        "phone": "Telefon numaranız",
+        "message": "Mesajınız",
+        "btn": "Gönder",
+        "privacy": "Formu göndererek belirtilen verilerin yalnızca talebinize yanıt vermek için işlenmesini kabul edersiniz.",
+        "err": {
+            "name": "Lütfen geçerli bir ad girin",
+            "phone": "Lütfen geçerli bir telefon numarası girin (+998 XX XXX XX XX)",
+            "message": "Mesaj çok uzun",
+            "messageRequired": "Lütfen bir mesaj ekleyin"
+        }
+    },
+    "formsent": {
+        "sending": "Gönderiliyor…",
+        "success": "Başarıyla gönderildi",
+        "error": "Gönderilemedi. Lütfen tekrar deneyin",
+        "validation": "Doldurulan alanları kontrol edip tekrar deneyin",
+        "rateLimited": "Arka arkaya çok fazla talep. Lütfen bir dakika sonra deneyin",
+        "notConfigured": "Talep alımı geçici olarak kullanılamıyor — lütfen bizi arayın",
+        "timeout": "Sunucu zamanında yanıt vermedi. Lütfen tekrar deneyin",
+        "tooLarge": "Mesaj çok uzun",
+        "network": "Sunucuya bağlanılamıyor. Bağlantınızı kontrol edin",
+        "deliveryUnknown": "Gönderim sonucu henüz bilinmiyor. Biz doğrularken formu tekrar göndermeyin."
+    },
+    "footer": {
+        "h4": "Şirketimiz",
+        "h42": "İletişim",
+        "projects": "Projelerimiz",
+        "about": "Anahtar teslim ısıtma, havalandırma ve iklimlendirme. Taşkent, Özbekistan.",
+        "copyright": "© PROHVAC. Heating and air conditioning.",
+        "city": "Taşkent, Özbekistan"
+    },
+    "lang": {
+        "label": "Arayüz dili",
+        "current": "Arayüz dili: {{lang}}",
+        "switching": "Dil değiştiriliyor…"
+    },
+    "system": {
+        "checking": "Adres kontrol ediliyor…",
+        "loadingPanel": "Panel yükleniyor…",
+        "retry": "Tekrar dene",
+        "reload": "Sayfayı yenile",
+        "home": "Ana sayfaya dön",
+        "notFound": {
+            "title": "Sayfa bulunamadı",
+            "text": "Adresi kontrol edin veya PROHVAC ana sayfasına dönün."
+        },
+        "unavailable": {
+            "title": "Panel geçici olarak kullanılamıyor",
+            "text": "Yönetim API'sine ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin."
+        },
+        "chunkFailed": {
+            "title": "Panel yüklenemedi",
+            "text": "Arayüz dosyaları güncellenmiş olabilir. Sayfayı yenileyip tekrar deneyin."
+        },
+        "diagnostic": {
+            "summary": "Teknik ayrıntılar",
+            "code": "Hata kodu",
+            "requestId": "İstek kimliği",
+            "time": "Zaman",
+            "hint": "Destek ekibine başvurursanız bu bilgileri paylaşın."
+        }
+    },
+    "errors": {
+        "fallback": {
+            "message": "İstek tamamlanamadı."
+        },
+        "forbidden": {
+            "message": "Bu işlem için yetkiniz yok.",
+            "action": "Gerekli yetkilere sahip bir yöneticiye başvurun."
+        },
+        "unauthorized": {
+            "message": "Oturum açmanız gerekiyor.",
+            "action": "Tekrar oturum açıp işlemi yineleyin."
+        },
+        "session_expired": {
+            "message": "Oturum sona erdi.",
+            "action": "Tekrar oturum açın; yinelemeden önce kaydedilmemiş verileri kontrol edin."
+        },
+        "must_change_password": {
+            "message": "Önce geçici parolayı değiştirmelisiniz.",
+            "action": "Parola değiştirmeyi tamamlayıp işlemi yineleyin."
+        },
+        "csrf_failed": {
+            "message": "Oturumun güvenlik anahtarı geçerliliğini yitirdi.",
+            "action": "Sayfayı yenileyip işlemi yineleyin."
+        },
+        "rate_limited": {
+            "message": "Arka arkaya çok fazla istek gönderildi.",
+            "action": "Belirtilen süre kadar bekleyip tekrar deneyin."
+        },
+        "validation_failed": {
+            "message": "Bazı alanlar hatalı doldurulmuş.",
+            "action": "İşaretlenen alanları kontrol edin."
+        },
+        "not_configured": {
+            "message": "Gerekli entegrasyon henüz yapılandırılmadı.",
+            "action": "Telefonla iletişime geçin veya entegrasyon ayarlarını kontrol edin."
+        },
+        "telegram_failed": {
+            "message": "Telegram mesajı kabul etmedi.",
+            "action": "Yinelemeden önce entegrasyonun durumunu kontrol edin."
+        },
+        "delivery_unknown": {
+            "message": "Teslim sonucu henüz bilinmiyor.",
+            "action": "Otomatik olarak yeniden göndermeyin; önce Telegram'ı kontrol edin."
+        },
+        "payload_too_large": {
+            "message": "Gönderilen veri çok büyük.",
+            "action": "Dosyayı veya metni küçültüp tekrar deneyin."
+        },
+        "unsupported_media_type": {
+            "message": "Bu veri biçimi desteklenmiyor.",
+            "action": "Arayüzde belirtilen biçimlerden birini kullanın."
+        },
+        "media_rejected": {
+            "message": "Dosya biçimi veya boyutu nedeniyle kabul edilmedi.",
+            "action": "İzin verilen boyutta JPEG, PNG veya WebP görseli yükleyin."
+        },
+        "quota_exceeded": {
+            "message": "Depolama alanı doldu.",
+            "action": "Gereksiz dosyaları silip yeniden yükleyin."
+        },
+        "media_in_use": {
+            "message": "Dosya sitede kullanılıyor.",
+            "action": "Önce sayfalardan kaldırın, sonra silin."
+        },
+        "network_error": {
+            "message": "Sunucuyla bağlantı yok.",
+            "action": "Bağlantınızı kontrol edip tekrar deneyin."
+        },
+        "server_error": {
+            "message": "Sunucu isteği şu anda karşılayamıyor.",
+            "action": "Daha sonra tekrar deneyin; destek ekibine istek kimliğini bildirin."
+        }
+    }
+}
