@@ -1,0 +1,5 @@
+{
+  "superReview": {
+    "skipChecks": ["branch"]
+  }
+}

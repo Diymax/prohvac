@@ -75,6 +75,17 @@ The application runs through `app.cjs`. On startup it validates production
 configuration and applies pending migrations atomically. The first administrator
 is created with `node scripts/admin-cli.mjs create-user --username <name>`.
 
+## Deployment
+
+A push to `main` deploys. `.github/workflows/deploy.yml` runs lint, tests and
+every smoke script, builds the release archive, ships it to the host, flips the
+`current` symlink and finally verifies the live domain with
+`scripts/verify-live.mjs`. Nothing on the server is built there — the Plesk
+chroot has no `node`, `git` or `npm`.
+
+`docs/DEPLOYMENT.md` covers the required secrets, the constraints the chroot
+imposes on the remote script, and the manual first-deploy sequence.
+
 ## Security summary
 
 Administrative authorization is enforced by the server. A user with a temporary

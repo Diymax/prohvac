@@ -172,3 +172,29 @@ every remaining failure mode was silent, which is what these changes address.
   ride an hourly leased lifecycle tick — no cron needed) and what does not
   (backups, media GC). Backups had no schedule at all, and the default
   destination was inside `DATA_DIR` — the directory a failure destroys.
+
+## Continuous deployment (2026-08-07)
+
+- **Push to `main` deploys.** `.github/workflows/deploy.yml` builds and verifies
+  in one job and ships in another; the deploy key lives in the `production`
+  GitHub environment so it is unreachable while npm build tooling runs.
+- **`.gitignore` had `data/` unanchored** and was therefore excluding
+  `src/data/content.js` — the landing page content. Nothing showed it in a
+  working copy; a clean clone simply failed to build, because vite could not
+  resolve `../data/content`. Fixed to `/data/`. Any future ignore rule meant for
+  `DATA_DIR` must be anchored.
+- **`npm test` requires a prior `npm run build`.** Several suites serve
+  `dist/index.html` and assert a 404 for unknown paths; without `dist` they get
+  503 instead. The `ci` script and both workflows now build first.
+- **A colon inside a plain YAML scalar broke every deploy run.** A one-line
+  `run: curl -w '<label>: HTTP %{http_code}'` parses as a nested mapping, and
+  GitHub rejects the whole file before any job starts — the error surfaces only
+  as "Invalid workflow file", with no job log. Inline `run:` values containing a
+  colon must be block scalars.
+- **`verify-live.mjs` now asserts only what the application controls.** Two
+  checks failed for reasons no deploy can fix: the `Server`/`X-Powered-By`
+  banners come from nginx and Passenger (this hosting plan exposes no
+  "additional nginx directives" field, so it is a warning naming where to change
+  it), and the host-rebinding probe never reaches the app at all — nginx picks
+  the vhost by that same header and answers with the panel's default page, which
+  is the desired outcome. The check now asserts the reply did not come from us.

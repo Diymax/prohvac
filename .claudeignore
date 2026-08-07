@@ -1,0 +1,64 @@
+# Files Claude must not read. Mirrors the forbidden-path list in the global
+# CLAUDE.md; the exclamation-mark lines are the documented exceptions, which
+# hold templates and public material only.
+
+# --- Secrets & keys ---
+.env*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+*.jks
+!truststore.jks
+!*-truststore.jks
+*.keystore
+id_rsa*
+id_ed25519*
+id_ecdsa*
+*.kdbx
+credentials.json
+!credentials.example.json
+service-account*.json
+*service-account*.json
+*-secrets.yaml
+*-secrets.yml
+!*-secrets.example.yaml
+!*-secrets.example.yml
+!*-sealed-secrets.yaml
+!*-sealed-secrets.yml
+
+# --- Local configs & caches with credentials ---
+.aws/
+.ssh/
+.gnupg/
+.docker/config.json
+.npmrc
+.pypirc
+.netrc
+.kube/config
+.terraform.d/
+.azure/
+.gcloud/
+
+# --- Build artifacts & dependencies (no review value) ---
+node_modules/
+dist/
+.next/
+.nuxt/
+__pycache__/
+*.pyc
+.venv/
+venv/
+release/
+.release-build-*/
+.release-backup-*/
+
+# --- Runtime data: SQLite database and admin uploads, both hold personal data ---
+/data/
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.bak
+backups/

@@ -118,6 +118,47 @@ Recommended proxy controls:
 Never overlay a release onto an unknown live tree and never recursively delete
 the current document root. Runtime data is external and must survive code rollback.
 
+## Continuous deployment
+
+`.github/workflows/deploy.yml` performs the steps above on every push to `main`.
+Two jobs, deliberately split: `verify` runs lint, tests and every smoke script
+and produces the release archive; `deploy` ships it. The deploy key lives in the
+`production` GitHub environment, so it is out of reach while third-party build
+tooling — vite, eslint, vitest and their transitive dependencies — is executing.
+
+Four environment secrets are required: `DEPLOY_HOST`, `DEPLOY_USER`,
+`DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS`. Host verification is on
+(`StrictHostKeyChecking yes`), so a changed server key stops the deploy instead
+of trusting it.
+
+On the server the workflow is constrained by the Plesk chroot, which has no
+`node`, `git`, `find`, `sort` or `sha256sum`. This shapes three decisions worth
+knowing before editing the remote script:
+
+- **`scp -O`.** OpenSSH 9 defaults to SFTP and the chroot has no `sftp-server`;
+  the legacy protocol uses `/bin/scp`, which does exist.
+- **Integrity is checked twice, differently.** The runner verifies the archive
+  against the manifest hashes; the server can only compare the exact byte count
+  and the gzip CRC, because there is no `sha256sum` in the chroot.
+- **Pruning relies on lexical glob order.** Release ids start with a UTC
+  timestamp precisely so `*/` expands oldest-first without `sort`. The release
+  `current` points at is always skipped, so a rollback survives the next deploy.
+
+Extraction lands in `releases/.staging-<id>` and is moved into place in one
+rename, so `releases/<id>` is either absent or complete. `current` is a
+*relative* symlink: the deploying shell is chrooted and Passenger is not, so an
+absolute path written here would be dangling on the other side. Restart is
+`touch current/tmp/restart.txt` — the chroot has neither systemd nor the Plesk
+CLI, and Passenger re-execs on the next request after that file changes.
+
+The last step is `scripts/verify-live.mjs` against the real domain. Set the
+repository variable `AUTO_ROLLBACK=1` to have a failed verification flip the
+symlink back automatically; without it the job prints the manual rollback
+commands and stops.
+
+`data/` and `production.env` are never touched by any of this. Database, media
+and the copy of the panel variables outlive every release.
+
 ## HSTS ramp
 
 `Strict-Transport-Security` is the one header a mistake in cannot be withdrawn:
