@@ -198,3 +198,11 @@ every remaining failure mode was silent, which is what these changes address.
   it), and the host-rebinding probe never reaches the app at all — nginx picks
   the vhost by that same header and answers with the panel's default page, which
   is the desired outcome. The check now asserts the reply did not come from us.
+- **The hosting subscription has a tight disk quota** (~512 MB), and a deploy
+  needs roughly 25 MB of headroom: archive, staging copy and the new release
+  coexist for a moment. The first quota exhaustion showed up as `tar: Cannot
+  write: Disk quota exceeded` in the middle of extraction, which leaves a
+  `.staging-*` directory the next run has to clear. Space was reclaimed by
+  deleting `/httpdocs/node_modules` — dependencies of the superseded site, no
+  longer served and restorable with `npm install` from the retained
+  `package-lock.json`. Watch this before adding releases to `KEEP_RELEASES`.
