@@ -93,8 +93,14 @@ must('есть Content-Security-Policy', csp.length > 0)
 must('в script-src нет unsafe-inline', !/script-src[^;]*'unsafe-inline'/.test(csp))
 must('есть X-Content-Type-Options: nosniff', home.headers.get('x-content-type-options') === 'nosniff')
 must('есть X-Frame-Options: DENY', (home.headers.get('x-frame-options') || '').toUpperCase() === 'DENY')
-must('сервер не представляется', !home.headers.get('server') && !home.headers.get('x-powered-by'),
-  [home.headers.get('server'), home.headers.get('x-powered-by')].filter(Boolean).join(' '))
+// Баннер платформы. Наш процесс не ставит ни Server, ни X-Powered-By — оба
+// приходят от nginx и Passenger, а до них из приложения не дотянуться: на
+// общем хостинге это правится только директивами вебсервера в панели.
+// Поэтому предупреждение, а не отказ: раскрытие версии сайт не ломает, и
+// останавливать из-за него выкладку нечего.
+const banner = [home.headers.get('server'), home.headers.get('x-powered-by')].filter(Boolean).join(' ')
+should('сервер не представляется', !banner,
+  banner && `${banner} — убирается в Plesk: Apache и nginx → дополнительные директивы nginx`)
 
 // HSTS. Заголовок имеет смысл только по https, поэтому по http его отсутствие
 // не ошибка — иначе скрипт нельзя было бы навести на стенд.
@@ -165,7 +171,7 @@ must('предсказуемый /admin закрыт', legacy.status === 404, `H
 // среда его молча выбрасывает, и запрос уходит с правильным именем. Поэтому
 // запрос собирается вручную через node:http(s); для TLS имя в SNI остаётся
 // настоящим, подменяется только заголовок — ровно так выглядит атака.
-const rebindStatus = await new Promise((resolve) => {
+const rebind = await new Promise((resolve) => {
   const url = new URL(base)
   const request = (isHttps ? httpsRequest : httpRequest)(
     {
@@ -179,7 +185,7 @@ const rebindStatus = await new Promise((resolve) => {
     },
     (response) => {
       response.resume()
-      resolve(response.statusCode)
+      resolve({ status: response.statusCode, csp: response.headers['content-security-policy'] || '' })
     }
   )
   request.on('error', () => resolve(null))
@@ -189,10 +195,16 @@ const rebindStatus = await new Promise((resolve) => {
   })
   request.end()
 })
+// Отвергнуть чужое имя может кто угодно из двух, и оба исхода одинаково
+// хороши. Само приложение отвечает 421, а на общем хостинге запрос до него
+// просто не доходит: имя виртуального хоста nginx выбирает по этому же
+// заголовку и отдаёт запрос дефолтной заглушке панели. Поэтому смотрим не на
+// код ответа, а на то, что ответило НЕ наше приложение, — CSP мы ставим на
+// каждый свой ответ, и у чужой страницы его нет.
 must(
-  'чужой Host отвергается',
-  rebindStatus === 421 || rebindStatus === 404,
-  rebindStatus === null ? 'запрос не прошёл' : `HTTP ${rebindStatus}`
+  'чужой Host до приложения не доходит',
+  rebind !== null && (rebind.status === 421 || rebind.status === 404 || !rebind.csp),
+  rebind === null ? 'запрос не прошёл' : `HTTP ${rebind.status}${rebind.csp ? ' и ответ от нашего приложения' : ''}`
 )
 
 // ---------------------------------------------------------------------------
