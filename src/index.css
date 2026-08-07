@@ -1709,22 +1709,41 @@ a[href^='tel:'] {
     max-width: 100%;
   }
 
-  .pv-hero__media {
-    inset: 0;
-    opacity: 0.5;
+  /* On a phone the illustration stops being a backdrop and gets its own band.
+     As a backdrop it did not work here: opacity 0.5 under a 0.9 veil left about
+     five percent of it visible, and cropping it into a narrow tall screen threw
+     both the technicians and the outdoor unit out of frame — the whole subject.
+     The first screen read as a white blur.
+
+     In flow rather than absolute: then aspect-ratio sets the band height and the
+     text below places itself, with no padding computed from the screen width. */
+  .pv-hero {
+    display: block;
+    min-height: 0;
   }
 
+  .pv-hero__media {
+    position: static;
+    /* Top margin clears the floating header. */
+    margin: 96px 16px 0;
+    aspect-ratio: 4 / 3;
+    border-radius: 28px;
+    opacity: 1;
+    /* The artwork is wide and the band is nearly square, so cover crops the
+       sides. The subject sits in the right half — the left one is intentionally
+       empty for the desktop text — so the right edge is what to hold on to. */
+    background-position: right center;
+    transform: none;
+  }
+
+  /* The veil lightened the backdrop under the text. The text now sits below the
+     picture instead of on top of it, so there is nothing left to lighten. */
   .pv-hero__veil {
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.9) 0%,
-      rgba(244, 251, 255, 0.82) 60%,
-      rgba(255, 255, 255, 0.92) 100%
-    );
+    display: none;
   }
 
   .pv-hero__inner {
-    padding: 130px 20px 70px;
+    padding: 28px 20px 70px;
   }
 
   .pv-section,

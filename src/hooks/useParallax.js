@@ -25,6 +25,11 @@ const useParallax = () => {
       frame = 0
       const y = window.scrollY || 0
 
+      // On a phone the hero layer is an ordinary block in flow (index.css,
+      // @media max-width: 900px), not a backdrop covering the section. Shifting
+      // it there would move it out of its band and leave a gap above the text.
+      const offset = window.innerWidth > 900 ? y * 0.05 : 0
+
       document.querySelectorAll('[data-parallax]').forEach((el) => {
         // scaleX(var(--pv-flip)) обязателен: inline-стиль перекрывает правило
         // из таблицы стилей целиком, и без этого множителя зеркалирование героя
@@ -32,7 +37,7 @@ const useParallax = () => {
         // пустым, потому что смысловая часть иллюстрации уезжала под вуаль.
         // Значение переменной задаёт CSS ([dir='rtl'] .pv-hero__media),
         // поэтому смена языка подхватывается без перезапуска эффекта.
-        el.style.transform = `translate3d(0, ${y * 0.05}px, 0) scaleX(var(--pv-flip, 1))`
+        el.style.transform = `translate3d(0, ${offset}px, 0) scaleX(var(--pv-flip, 1))`
       })
 
       document.querySelectorAll('[data-parallax-soft]').forEach((el) => {
@@ -48,10 +53,14 @@ const useParallax = () => {
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
+    // Rotating a phone switches the branch above with no scroll event to follow:
+    // without a recompute the layer would keep an offset taken from the old width.
+    window.addEventListener('resize', onScroll, { passive: true })
     apply()
 
     return () => {
       window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
       if (frame) cancelAnimationFrame(frame)
     }
   }, [reduced])
