@@ -1,7 +1,11 @@
 name: CI
 
+# main is excluded on purpose: deploy.yml runs the same checks there, and
+# running both meant every release paid for the suite twice with no extra
+# signal. Everything else — feature branches and pull requests — lands here.
 on:
   push:
+    branches-ignore: [main]
   pull_request:
 
 jobs:

@@ -64,6 +64,20 @@ jobs:
       # loopback. It never reaches api.telegram.org and never posts to the chat.
       - run: npm run smoke:telegram
 
+      # The source handover archive and the clean-tree assertion also run in
+      # ci.yml. They are repeated here because this is the job that gates the
+      # deploy: a check that only ci.yml performs cannot stop a release, and a
+      # red CI next to a green deploy is the worst of both signals.
+      - run: npm run build:source-handoff
+        env:
+          SOURCE_DATE_EPOCH: ${{ steps.meta.outputs.source_date_epoch }}
+      - run: npm run verify:source-handoff
+      - name: Generated tree must remain clean
+        run: |
+          git status --porcelain --untracked-files=all \
+            | grep -Ev '^\?\? release/' \
+            | (! grep .)
+
       # The commit time, not 0: RELEASE_MANIFEST.json is the only record on the
       # server of what is deployed, and a 1970 date makes it useless for
       # answering "is the live site older than this fix?".
