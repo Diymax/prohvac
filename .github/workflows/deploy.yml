@@ -55,8 +55,9 @@ jobs:
 
       - run: npm run lint
       - run: npm run verify:deployment-model
-      - run: npm test
+      # Сборка ДО тестов: часть набора обслуживает оболочку из dist/index.html.
       - run: npm run build
+      - run: npm test
       - run: npm run smoke:migrations
       - run: npm run smoke:production
       # Self-contained: spawns its own app and its own Bot API stub on

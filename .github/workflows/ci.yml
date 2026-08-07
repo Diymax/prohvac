@@ -17,8 +17,11 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run verify:deployment-model
-      - run: npm test
+      # Сборка ДО тестов: часть набора обслуживает оболочку из dist/index.html
+      # (uniform404, app.outage, spa). Без неё они получают 503 вместо 404,
+      # и на чистом клоне набор не проходил никогда.
       - run: npm run build
+      - run: npm test
       - run: npm run smoke:migrations
       - run: npm run smoke:production
       - run: npm run build:release

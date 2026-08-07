@@ -28,7 +28,7 @@
     "smoke:release": "node scripts/release-smoke.mjs",
     "prepare:production": "node scripts/prepare-production.mjs",
     "verify:live": "node scripts/verify-live.mjs",
-    "ci": "npm run lint && npm run verify:deployment-model && npm test && npm run build && npm run smoke:migrations && npm run smoke:production && npm run smoke:telegram && npm run build:release && npm run verify:release && npm run smoke:release && npm run build:source-handoff && npm run verify:source-handoff",
+    "ci": "npm run lint && npm run verify:deployment-model && npm run build && npm test && npm run smoke:migrations && npm run smoke:production && npm run smoke:telegram && npm run build:release && npm run verify:release && npm run smoke:release && npm run build:source-handoff && npm run verify:source-handoff",
     "build:source-handoff": "node scripts/build-source-handoff.mjs",
     "verify:source-handoff": "node scripts/verify-source-handoff.mjs release/prohvac-source.tar.gz"
   },
