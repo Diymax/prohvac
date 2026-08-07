@@ -133,6 +133,48 @@ must('nonce свой на каждый ответ', Boolean(nonceOf(html)) && no
 must('плейсхолдер nonce подставлен', !html.includes('__CSP_NONCE__'))
 
 // ---------------------------------------------------------------------------
+// Media library
+// ---------------------------------------------------------------------------
+//
+// A separate check because this failure is invisible from everywhere else. The
+// files live in DATA_DIR, which a deploy deliberately never touches, so on a
+// first deploy nobody puts them there. The database still references them, the
+// page answers 200, the deploy is green, and only a human looking at the site
+// notices empty frames where the project photographs belong.
+
+section('Media library')
+
+const content = await fetchSafe(`${base}/api/site/content?lang=ru`, {
+  headers: { Accept: 'application/json' },
+})
+if (content.error || content.status !== 200) {
+  must('site content is served', false, content.error ? content.error.message : `HTTP ${content.status}`)
+} else {
+  const contentText = await content.text()
+  const referenced = [...new Set(contentText.match(/\/media\/[A-Za-z0-9._-]+/g) || [])]
+  must('site content is served', true, `media references: ${referenced.length}`)
+
+  const broken = []
+  for (const path of referenced) {
+    const asset = await fetchSafe(`${base}${path}`)
+    const type = asset.error ? '' : asset.headers.get('content-type') || ''
+    if (asset.error || asset.status !== 200 || !type.startsWith('image/')) {
+      broken.push(`${path} -> ${asset.error ? asset.error.message : asset.status}`)
+    }
+  }
+  must(
+    'every referenced image is served',
+    referenced.length > 0 && broken.length === 0,
+    referenced.length === 0
+      ? 'content references no image at all - it looks unpopulated'
+      : broken.length === 0
+        ? `${referenced.length} files`
+        : `${broken.length} of ${referenced.length} missing: ${broken.slice(0, 3).join(', ')}` +
+          ' - the files are copied into DATA_DIR/media separately from the release'
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Яндекс.Метрика
 // ---------------------------------------------------------------------------
 

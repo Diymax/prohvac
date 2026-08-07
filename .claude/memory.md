@@ -206,3 +206,10 @@ every remaining failure mode was silent, which is what these changes address.
   deleting `/httpdocs/node_modules` — dependencies of the superseded site, no
   longer served and restorable with `npm install` from the retained
   `package-lock.json`. Watch this before adding releases to `KEEP_RELEASES`.
+- **The media library does not travel with a release.** Files live in
+  `DATA_DIR/media`, which the deploy deliberately never touches, so on the first
+  deploy nobody puts them there. The database still references them by content
+  hash, every page answers 200, the deploy is green — and the site renders empty
+  frames. Production ran this way until someone looked at it. `verify-live.mjs`
+  now resolves every `/media/…` reference in `/api/site/content` and fails when
+  one does not serve an image.

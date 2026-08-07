@@ -159,6 +159,21 @@ commands and stops.
 `data/` and `production.env` are never touched by any of this. Database, media
 and the copy of the panel variables outlive every release.
 
+That exclusion has a first-deploy consequence worth stating plainly: **the media
+library does not arrive with the code.** A pre-baked database references images
+by content hash, and if the files were never copied into `DATA_DIR/media` the
+site answers 200 everywhere, the deploy is green, and the pages simply render
+empty frames where the photographs belong. Copy the directory once, next to the
+database:
+
+```sh
+scp -O data/media/* <user>@<host>:/prohvac/data/media/
+```
+
+`scripts/verify-live.mjs` now asserts that every `/media/…` reference in
+`/api/site/content` actually serves an image, so a missing library fails the
+deploy instead of reaching visitors.
+
 ## HSTS ramp
 
 `Strict-Transport-Security` is the one header a mistake in cannot be withdrawn:
