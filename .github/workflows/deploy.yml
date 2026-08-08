@@ -101,6 +101,10 @@ jobs:
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # workflow_dispatch runs on whatever ref the operator picks in the UI, so
+    # without this the "only the release branch deploys" promise at the top of
+    # the file held for pushes and for nothing else.
+    if: github.ref == 'refs/heads/main'
     # A separate job so the deploy key lives in a protected environment and is
     # out of scope while third-party build tooling (vite, eslint, vitest and
     # their transitive dependencies) is executing.
@@ -203,6 +207,23 @@ jobs:
           [ "$actual" = "$EXPECTED" ] || { echo "размер не сошёлся: $actual вместо $EXPECTED" >&2; rm -f "$ARCHIVE"; exit 1; }
           gzip -t "$ARCHIVE"
 
+          # The release id is derived from the commit, so re-running a workflow
+          # produces the id that may already be live. Extraction below starts
+          # with `rm -rf "$TARGET"`, which in that case would delete the very
+          # directory `current` points at — the site would 404 until the tar
+          # finished, and a dropped connection would leave it dangling. The
+          # archive is byte-identical to what is already there, so there is
+          # nothing to extract: restart and stop.
+          link="$(ls -ld "$ROOT/current" 2>/dev/null || true)"
+          live="${link##*-> }"; live="${live##*/}"
+          if [ "$live" = "$RELEASE_ID" ] && [ -f "$TARGET/app.cjs" ]; then
+            rm -f "$ARCHIVE"
+            mkdir -p "$TARGET/tmp"
+            touch "$TARGET/tmp/restart.txt"
+            echo "release $RELEASE_ID is already live - restarting without extraction"
+            exit 0
+          fi
+
           # Extract to staging, then move the tree in one rename, so
           # releases/<id> is either absent or complete — never half-written.
           rm -rf "$ROOT/releases"/.staging-* 2>/dev/null || true
@@ -267,8 +288,14 @@ jobs:
       - name: Verify live site
         run: node scripts/verify-live.mjs "$LIVE_URL"
 
+      # PREVIOUS_RELEASE equals RELEASE_ID when the same commit is deployed
+      # twice. Relinking `current` to itself is not a rollback, and reporting
+      # success for it hides that there is nowhere to roll back to.
       - name: Roll back on failed verification
-        if: failure() && vars.AUTO_ROLLBACK == '1' && env.PREVIOUS_RELEASE != ''
+        if: >-
+          failure() && vars.AUTO_ROLLBACK == '1'
+          && env.PREVIOUS_RELEASE != ''
+          && env.PREVIOUS_RELEASE != env.RELEASE_ID
         run: |
           set -euo pipefail
           echo "::warning::Проверка не прошла — возвращаю $PREVIOUS_RELEASE"

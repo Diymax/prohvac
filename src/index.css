@@ -1625,7 +1625,13 @@ a[href^='tel:'] {
 }
 
 [dir='rtl'] .pv-hero__media {
-  background-position: left center;
+  /* No background-position here, on purpose. The crop is chosen in the image's
+     own coordinates rather than the screen's, and the subject always sits on
+     its right, so both directions need the right edge. The former
+     'left center' broke the phone band: a [dir] selector outranks a rule from
+     a media query and won, so the Arabic locale framed empty sky instead of
+     the technicians. Moving the subject to the left is the mirror's job below,
+     not the crop's. */
   /* См. комментарий у .pv-hero__media: transform здесь ставить нельзя,
      его затрёт inline-стиль параллакса. */
   --pv-flip: -1;
@@ -1727,13 +1733,21 @@ a[href^='tel:'] {
     /* Top margin clears the floating header. */
     margin: 96px 16px 0;
     aspect-ratio: 4 / 3;
+    /* A ceiling for landscape and short windows. Without it an 852x393 screen
+       gave the band 615px of height - taller than the screen itself - and
+       pushed the headline and the buttons onto a second scroll. In portrait it
+       never applies: 4/3 of the width is smaller there. */
+    max-height: 46vh;
     border-radius: 28px;
     opacity: 1;
     /* The artwork is wide and the band is nearly square, so cover crops the
        sides. The subject sits in the right half — the left one is intentionally
        empty for the desktop text — so the right edge is what to hold on to. */
     background-position: right center;
-    transform: none;
+    /* No transform here. The parallax inline style would outrank it anyway,
+       and under prefers-reduced-motion, where the hook clears that inline
+       style, 'none' would also kill the --pv-flip mirror in the Arabic locale.
+       The phone offset is suppressed inside the hook, not in the stylesheet. */
   }
 
   /* The veil lightened the backdrop under the text. The text now sits below the
