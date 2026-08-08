@@ -1537,7 +1537,11 @@ textarea.pv-input {
   margin: 0;
 }
 
-.pv-footer h4 {
+/* h3, not h4: after the <h2> of the "Any questions" section the footer started
+   at level four, leaving a gap in the heading tree. A screen reader announces a
+   section that does not exist at that point. Nothing changes visually - the size
+   is set right here. */
+.pv-footer h3 {
   color: var(--pv-heading);
   font-size: 17px;
   font-weight: 700;

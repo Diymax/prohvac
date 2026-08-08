@@ -212,7 +212,7 @@ export const normalizeContent = (raw) => {
   }
 }
 
-/** Контент из репозитория. Он же значение контекста, пока сервер не ответил. */
+/** Content from the repository. Shown when the server did not answer. */
 export const FALLBACK_CONTENT = normalizeContent({
   advantages: ADVANTAGES,
   stats: STATS,
@@ -221,6 +221,31 @@ export const FALLBACK_CONTENT = normalizeContent({
   gallery: ABOUT_GALLERY,
   phones: PHONES,
 })
+
+/**
+ * The same content without the large photographs - the value used while the
+ * request to the server is still in flight.
+ *
+ * Why. Project covers and the gallery exist both in the bundle and in the
+ * server's media library, and they are the same photographs. While the page
+ * showed the bundled ones the browser had already started fetching them, then
+ * the API answer arrived and swapped the addresses for `/media/...` - so a
+ * phone downloaded both. Measured on the live page: 345 KB out of 2165 KB of
+ * images never reached the screen.
+ *
+ * Text, numbers, logos and icons stay: they weigh single-digit kilobytes and
+ * keep the first screen ready, which is what the built-in content is for. The
+ * photographs come back in full when the request fails (ContentProvider).
+ */
+export const FALLBACK_WITHOUT_PHOTOS = {
+  ...FALLBACK_CONTENT,
+  projects: FALLBACK_CONTENT.projects.map((project) => ({
+    ...project,
+    cover: null,
+    photos: [],
+  })),
+  gallery: [],
+}
 
 // Значение по умолчанию — не пустой объект: компонент, отрисованный вне
 // провайдера (тест, отдельная страница), обязан показать контент, а не упасть

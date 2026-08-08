@@ -31,7 +31,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4>{t('footer.h4')}</h4>
+            <h3>{t('footer.h4')}</h3>
             <ul>
               {/* Список выведен из NAV_LINKS: собственный массив ссылок здесь
                   разъезжался с меню — раздел добавляли в шапку, а в подвале
@@ -45,7 +45,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4>{t('footer.h42')}</h4>
+            <h3>{t('footer.h42')}</h3>
             <ul>
               {phones.map((phone) => (
                 <li key={phone}>

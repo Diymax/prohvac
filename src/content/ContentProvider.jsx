@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
 
-import { ContentContext, FALLBACK_CONTENT, normalizeContent } from './useContent'
+import {
+  ContentContext,
+  FALLBACK_CONTENT,
+  FALLBACK_WITHOUT_PHOTOS,
+  normalizeContent,
+} from './useContent'
 
 // Тот же приём, что и с адресом заявки: адрес выносится в переменную окружения,
 // чтобы фронт можно было собрать под другой хост, не правя код.
@@ -27,7 +32,11 @@ const CONTENT_ENDPOINT = import.meta.env.VITE_CONTENT_ENDPOINT || '/api/site/con
  * в размонтированный компонент.
  */
 const ContentProvider = ({ children }) => {
-  const [content, setContent] = useState(FALLBACK_CONTENT)
+  // Start without the large photographs: the same shots arrive from the media
+  // library within tens of milliseconds, while the bundled ones are already
+  // downloading by then and never reach the screen. The full built-in content -
+  // photographs included - is set below when the request fails.
+  const [content, setContent] = useState(FALLBACK_WITHOUT_PHOTOS)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -54,6 +63,10 @@ const ContentProvider = ({ children }) => {
         // Отмена — это наш собственный размонтированный эффект, а не сбой.
         if (error.name === 'AbortError') return
         console.error('Контент с сервера недоступен, показываем встроенный:', error)
+        // This is the only place the bundled photographs are needed: the
+        // server will not send any, and a projects section without a single
+        // picture looks broken.
+        setContent(FALLBACK_CONTENT)
       }
     }
 
