@@ -61,7 +61,7 @@ everything looks fine and the chat buttons silently do nothing. See
 ## Runtime layout
 
 - `src/`: React public site and admin UI
-- `server/transport`/`server/routes`: HTTP adapters and guards
+- `server/http`/`server/routes`: HTTP adapters and guards
 - `server/application`: request-independent workflows and state machines
 - `server/repositories`: durable lead/delivery access
 - `server/integrations`: injectable external providers

@@ -213,3 +213,30 @@ every remaining failure mode was silent, which is what these changes address.
   frames. Production ran this way until someone looked at it. `verify-live.mjs`
   now resolves every `/media/…` reference in `/api/site/content` and fails when
   one does not serve an image.
+
+## Adversarial recheck of 2026-08-08
+
+- **The homepage answered 404 to anything without a literal `text/html` in
+  `Accept`.** Browsers and Googlebot send it; Telegram and WhatsApp link
+  previews, `facebookexternalhit` and YandexBot send `*/*`, and some monitors
+  send no header at all. A link to the site pasted into a chat unfurled into
+  nothing, and Yandex — the search engine that matters in this market — saw a
+  missing page. `acceptsHtml` now treats `*/*` and an absent header as HTML.
+  This does not weaken the uniform 404: `/` serves the shell to everyone
+  already, and unknown paths answer identically at any `Accept`.
+  `server/app.homepage-accept.test.js` pins all four cases.
+- **A re-run on an already deployed commit would have deleted the live
+  release.** The id is derived from the commit, so the same commit yields the
+  same id, and extraction opened with `rm -rf "$TARGET"` on the directory
+  `current` points at. In that same case `PREVIOUS_RELEASE == RELEASE_ID`, so
+  the automatic rollback would relink `current` to itself and report success.
+  The remote script now detects an already live id and only restarts.
+- **`[dir='rtl']` outranks a media query.** The RTL rule pinned
+  `background-position: left center`, which beat the phone rule by selector
+  specificity and framed the empty half of the hero artwork in Arabic. The crop
+  is chosen in the image's coordinates, so `right center` is correct for both
+  directions — the mirror, not the crop, moves the subject.
+- **`transform: none` in a media query is a trap next to this parallax.** The
+  inline style always wins while JS runs, so the rule did nothing — except
+  under `prefers-reduced-motion`, where the hook clears the inline style and
+  the rule would have silently killed the RTL mirror.

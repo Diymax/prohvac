@@ -298,16 +298,31 @@ jobs:
           && env.PREVIOUS_RELEASE != env.RELEASE_ID
         run: |
           set -euo pipefail
-          echo "::warning::Проверка не прошла — возвращаю $PREVIOUS_RELEASE"
+          echo "::warning::verification failed - restoring $PREVIOUS_RELEASE"
           ssh prohvac "cd '$REMOTE_ROOT' && ln -sfn 'releases/$PREVIOUS_RELEASE' current \
             && mkdir -p current/tmp && touch current/tmp/restart.txt && ls -ld current"
 
+      # The host and the user are not printed. Interpolating them here would
+      # paste secret values into a shell body — the thing the comment above the
+      # SSH step forbids — and the log would show them masked as *** anyway,
+      # which helps nobody. The ssh alias below is the one this job configures.
       - name: Rollback instructions
         if: failure()
         run: |
-          echo "::error::Развёртывание ${RELEASE_ID} не удалось"
-          echo "Откат вручную:"
-          echo "  ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}"
+          echo "::error::Deploy of ${RELEASE_ID} failed"
+          echo "Manual rollback (host and user live in the production environment secrets):"
+          echo "  ssh <DEPLOY_USER>@<DEPLOY_HOST>"
           echo "  cd /prohvac && ls -1 releases"
-          echo "  ln -sfn releases/${PREVIOUS_RELEASE:-<предыдущий>} current"
+          echo "  ln -sfn releases/${PREVIOUS_RELEASE:-<previous>} current"
           echo "  touch current/tmp/restart.txt"
+
+      # The incoming directory is otherwise cleaned only on the success path.
+      # The host runs on a tight disk quota, and a failed run used to leave a
+      # 6 MB archive behind — enough of them and the next extraction dies with
+      # "Disk quota exceeded" halfway through, which is how this was found.
+      - name: Clean up the uploaded archive
+        if: always()
+        continue-on-error: true
+        run: |
+          ssh prohvac "rm -f '$REMOTE_ROOT/incoming/${RELEASE_ID}.tar.gz' \
+                             '$REMOTE_ROOT/incoming/${RELEASE_ID}.tar.gz.part'" || true

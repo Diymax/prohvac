@@ -299,9 +299,18 @@ export const stopRuntimeInitialization = () => dbRuntime.shutdown()
 
 const isApiPath = (path) => path === '/api' || path.startsWith('/api/')
 
+// A literal 'text/html' in Accept comes from browsers and almost nobody else.
+// Telegram and WhatsApp link previews, facebookexternalhit and YandexBot send
+// '*/*', and some monitors send no header at all. All of them used to get a
+// 404 here: a link pasted into a chat unfurled into nothing, and Yandex saw a
+// page that does not exist.
+//
+// This costs no indistinguishability. '/' serves the shell to everyone anyway,
+// and unknown paths answer with the same uniform404 at any Accept.
 const acceptsHtml = (req) => {
   const accept = req.headers.accept
-  return typeof accept === 'string' && accept.includes('text/html')
+  if (typeof accept !== 'string' || accept.trim() === '') return true
+  return accept.includes('text/html') || accept.includes('*/*')
 }
 
 const isAdminApiPath = (path) => path.startsWith('/api/admin/') || path === '/api/admin'
