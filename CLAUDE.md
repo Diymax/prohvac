@@ -82,12 +82,12 @@ Dev-сервер счётчик вырезает ВСЕГДА (плагин `ana
 
 ## Структура
 
-- `api/lead.js` — обработчик заявок (сигнатура Vercel), единственное место,
-  где живёт токен бота. В клиентский бандл секреты попадать не должны.
-  Собирается фабрикой `createLeadHandler(deps)`: конфиг, лимитер, запись
-  принятой заявки и сборка сообщения внедряются снаружи, поэтому прод может
-  заменить process.env на настройки из БД и лимитер в памяти на SQLite,
-  не трогая само тело обработчика. Экспорт по умолчанию — вариант на env.
+- `server/routes/public.lead.js` accepts a lead: validation, rate limit, write.
+  Delivery lives in `server/application/lead-delivery.js` and the Bot API call
+  in `server/integrations/telegram.js`; the route holds no token.
+- `server/application/telegram-config.js` resolves the bot token and chat id.
+  A value stored in the database settings (encrypted with `APP_SECRET`) beats
+  the environment variable. No secret may reach the client bundle.
 - `server/app.js` — продовый роутер, точка входа `handleRequest(req, res, next)`.
 - `shared/lead.js` — общие правила валидации для клиента и сервера.
   При изменении правил править здесь, а не в двух местах.
