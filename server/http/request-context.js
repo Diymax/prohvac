@@ -196,13 +196,33 @@ const combinedHeader = (value) => {
   return typeof value === 'string' ? value : ''
 }
 
+// Stand-in peer for a Unix-socket connection, which has no address at all.
+// See the comment in resolveClientIp.
+const LOCAL_SOCKET_PEER = '127.0.0.1'
+
 /**
  * Uses forwarding headers only when the immediate socket peer is trusted.
  * X-Forwarded-For is walked right-to-left and stops at the first untrusted
  * hop; anything further left could have been supplied by that client.
+ *
+ * A Unix-socket connection has no peer address: req.socket.remoteAddress is
+ * undefined there. This used to end the matter - there was nothing to compare
+ * against the proxy list, the headers were not trusted, and the function
+ * returned null. The result: EVERY visitor got one ip_hash. The limiter
+ * counted them as a single client, and one scanner request to a honeypot path
+ * took the site down for everyone for a day. This is not a hypothesis - it
+ * happened on the live server under Passenger.
+ *
+ * Only a process on the same machine can open a Unix socket, which is to say
+ * the reverse proxy itself. So such a connection is treated as coming from
+ * loopback - but only when loopback is trusted anyway: an operator who wrote
+ * TRUSTED_PROXY_CIDRS=none declared there is no proxy in front, and we are not
+ * entitled to grant trust on their behalf.
  */
 export const resolveClientIp = (req, trustedProxyCidrs = []) => {
-  const peer = normalizeClientIp(req?.socket?.remoteAddress)
+  const socketPeer = normalizeClientIp(req?.socket?.remoteAddress)
+  const peer =
+    socketPeer ?? (isTrusted(LOCAL_SOCKET_PEER, trustedProxyCidrs) ? LOCAL_SOCKET_PEER : null)
   if (!peer || !isTrusted(peer, trustedProxyCidrs)) return peer
 
   const forwarded = combinedHeader(req?.headers?.['x-forwarded-for'])

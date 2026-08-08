@@ -33,6 +33,7 @@ import { sendPublicShell, sendSpa } from './http/spa.js'
 // значило бы однажды его перепутать.
 import { enterAdminGate, issueGateCookie, shouldRevealAdmin } from './auth/gate.js'
 import { createThrottle, isHoneypot } from './auth/throttle.js'
+import { isUnknownIpHash } from './crypto/hashid.js'
 import { createRateLimiter } from './lib/ratelimit.js'
 import { registerAdmin2faRoutes } from './routes/admin.2fa.js'
 import { registerAdminAuthRoutes } from './routes/admin.auth.js'
@@ -446,7 +447,11 @@ const dispatch = async (req, res) => {
     // Штраф пишется в базу. Пока она недоступна, записывать некуда — ответ при
     // этом обязан остаться прежним, иначе недоступность базы сама становится
     // сигналом сканеру, что он нащупал honeypot.
-    if (runtimeReady) {
+    // A ban lands on one ip_hash, and the "address unknown" hash is shared by
+    // every request whose address could not be resolved. Banning it takes the
+    // whole site down for a day on the strength of one scanner. A visitor we
+    // cannot tell apart is a visitor we must not punish.
+    if (runtimeReady && !isUnknownIpHash(ipHash)) {
       try {
         // registerHoneypot, а не registerFailure: у второго стадия проверяется
         // по списку ('password','totp','recovery'), и переданная сюда 'gate'

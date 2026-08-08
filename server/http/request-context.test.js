@@ -118,3 +118,35 @@ describe('attachRequestContext', () => {
     expect(hashUa).toHaveBeenCalledOnce()
   })
 })
+
+// A Unix-socket connection has no peer address, and before this change such a
+// request got neither an address of its own nor trust in the headers. On the
+// live server under Passenger that meant one ip_hash for every visitor.
+describe('resolveClientIp over a Unix socket', () => {
+  const loopback = compileTrustedProxyCidrs('127.0.0.1/32,::1/128')
+
+  const request = (headers = {}) => ({ socket: {}, headers })
+
+  it('takes the address from X-Forwarded-For when loopback is trusted', () => {
+    expect(resolveClientIp(request({ 'x-forwarded-for': '203.0.113.7' }), loopback)).toBe('203.0.113.7')
+  })
+
+  it('takes the address from X-Real-IP when X-Forwarded-For is absent', () => {
+    expect(resolveClientIp(request({ 'x-real-ip': '203.0.113.8' }), loopback)).toBe('203.0.113.8')
+  })
+
+  it('tells two visitors apart instead of merging them into one hash', () => {
+    const first = resolveClientIp(request({ 'x-forwarded-for': '203.0.113.7' }), loopback)
+    const second = resolveClientIp(request({ 'x-forwarded-for': '198.51.100.4' }), loopback)
+    expect(first).not.toBe(second)
+  })
+
+  it('does not trust the headers when the proxy list is empty', () => {
+    expect(resolveClientIp(request({ 'x-forwarded-for': '203.0.113.7' }), [])).toBe(null)
+  })
+
+  it('keeps the last untrusted hop of the chain', () => {
+    const chain = { 'x-forwarded-for': '203.0.113.7, 127.0.0.1' }
+    expect(resolveClientIp(request(chain), loopback)).toBe('203.0.113.7')
+  })
+})

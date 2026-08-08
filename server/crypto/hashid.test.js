@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { hashIp, hashUa } from './hashid.js'
+import { hashIp, hashUa, isUnknownIpHash } from './hashid.js'
 
 // Адреса из диапазонов, зарезервированных под документацию (RFC 5737, 3849).
 const IPV4 = '203.0.113.7'
@@ -90,5 +90,26 @@ describe('hashUa', () => {
     // Ключи для IP и UA разные, поэтому «неизвестно» в двух колонках
     // не превращается в одинаковую строку.
     expect(unknown).not.toBe(hashIp(''))
+  })
+})
+
+// The shared bucket must be recognisable. A ban applied to it lands on every
+// visitor at once, which is how the live site spent an evening answering 404
+// to everyone after a single request to a honeypot path.
+describe('isUnknownIpHash', () => {
+  it('recognises the hash of an address that could not be resolved', () => {
+    expect(isUnknownIpHash(hashIp(null))).toBe(true)
+    expect(isUnknownIpHash(hashIp(''))).toBe(true)
+    expect(isUnknownIpHash(hashIp('   '))).toBe(true)
+  })
+
+  it('does not mistake a real address for the shared bucket', () => {
+    expect(isUnknownIpHash(hashIp('203.0.113.7'))).toBe(false)
+    expect(isUnknownIpHash(hashIp('127.0.0.1'))).toBe(false)
+    expect(isUnknownIpHash(hashIp('2001:db8::1'))).toBe(false)
+  })
+
+  it('does not collide with the literal string "unknown" sent by a client', () => {
+    expect(isUnknownIpHash(hashIp('unknown'))).toBe(false)
   })
 })

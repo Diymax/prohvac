@@ -134,6 +134,18 @@ export const hashIp = (ip) => {
 }
 
 /**
+ * Is this the shared "address unknown" bucket rather than a real client?
+ *
+ * Every request whose address could not be determined lands in one hash, so a
+ * penalty applied to it lands on every visitor at once. Callers that punish an
+ * address - a ban, not a counter - have to be able to tell the difference.
+ *
+ * @param {string} hash
+ * @returns {boolean}
+ */
+export const isUnknownIpHash = (hash) => hash === hmacHex(PURPOSE_IP, UNKNOWN_IP)
+
+/**
  * HMAC-хеш User-Agent: 64 hex-символа в нижнем регистре.
  * Регистр и пробелы внутри строки сохраняем — в UA они значимы, и любая
  * «нормализация» здесь только склеивает разных клиентов в одного.
