@@ -11,13 +11,23 @@ export const CAPABILITY = Object.freeze({
   LEADS_EXPORT: 'leads.export',
   SETTINGS_MANAGE: 'settings.manage',
   SECURITY_SELF_MANAGE: 'security.self_manage',
+  USERS_MANAGE: 'users.manage',
 })
 
 export const CAPABILITY_KEYS = Object.freeze(Object.values(CAPABILITY))
 
+// The only capability owner has and admin does not, and the reason the two
+// roles are not the same thing. An admin who could edit accounts could promote
+// themselves to owner or delete the owner outright, which would leave the role
+// as decoration. Everything else - content, media, leads, settings - stays
+// identical between them, because that is the work an admin is hired for.
+const ADMIN_CAPABILITIES = Object.freeze(
+  CAPABILITY_KEYS.filter((capability) => capability !== CAPABILITY.USERS_MANAGE)
+)
+
 const matrix = Object.freeze({
   owner: new Set(CAPABILITY_KEYS),
-  admin: new Set(CAPABILITY_KEYS),
+  admin: new Set(ADMIN_CAPABILITIES),
   editor: new Set([
     CAPABILITY.DASHBOARD_READ,
     CAPABILITY.CONTENT_READ,

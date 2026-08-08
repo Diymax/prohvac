@@ -43,6 +43,7 @@ import { registerAdminMediaRoutes } from './routes/admin.media.js'
 import { registerAdminAnalyticsRoutes } from './routes/admin.analytics.js'
 import { registerAdminOperationsRoutes } from './routes/admin.operations.js'
 import { registerAdminSettingsRoutes } from './routes/admin.settings.js'
+import { registerAdminUsersRoutes } from './routes/admin.users.js'
 import { registerPublicContentRoutes } from './routes/public.content.js'
 import { createTranslateWorker } from './translate/worker.js'
 import { createProdLeadHandler } from './routes/public.lead.js'
@@ -231,6 +232,7 @@ const initializeDbRoutes = () => {
     runtimeStatus: () => dbRuntime.status(),
   })
   registerAdminAnalyticsRoutes(nextApiRouter, { db })
+  registerAdminUsersRoutes(nextApiRouter, { db })
   // Вебхук Telegram — публичный адрес, но живёт на apiRouter: он под '/api/'.
   // Аутентификация у него своя (секрет в заголовке), поэтому сессия и CSRF,
   // общие для '/api/admin/*', его не касаются.

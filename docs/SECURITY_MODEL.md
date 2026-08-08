@@ -26,8 +26,19 @@ cannot resume an old session.
 
 TOTP setup and confirmation are separate states. Recovery codes are stored
 hashed, shown once, and consumed atomically. If the device and recovery codes
-are lost, an operator uses `admin-cli reset-2fa`; this is an audited
-infrastructure recovery action, not a public bypass.
+are lost, an owner resets the second factor from the "Пользователи" section, or
+an operator runs `admin-cli reset-2fa`; both paths go through the same module
+(`server/application/user-admin.js`) and are audited. Neither is a public
+bypass.
+
+Account management is the one capability that separates `owner` from `admin`:
+`users.manage` is granted to `owner` alone, because an admin able to edit
+accounts could promote itself or delete the owner. Two rules make the panel
+impossible to lock permanently: nobody may change the role, the access or the
+existence of their own account from that section, and the last account that is
+both `owner` and active cannot be demoted, disabled or deleted. Deleting an
+account cascades its sessions, TOTP secret and recovery codes, while its traces
+in the audit log, media and leads survive with a null author.
 
 ## Secrets and logs
 

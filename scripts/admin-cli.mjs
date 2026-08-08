@@ -28,8 +28,13 @@ import { basename, dirname, join, resolve } from 'node:path'
 import { pipeline } from 'node:stream/promises'
 import { createGzip } from 'node:zlib'
 
-import { hashPassword, validatePasswordStrength, PASSWORD_MIN } from '../server/auth/password.js'
-import { revokeAllForUser } from '../server/auth/session.js'
+import { generatePassword, validatePasswordStrength, PASSWORD_MIN } from '../server/auth/password.js'
+import {
+  createUser as createUserRecord,
+  resetPassword as resetPasswordRecord,
+  resetTwoFactor as resetTwoFactorRecord,
+  UserAdminError,
+} from '../server/application/user-admin.js'
 import { config } from '../server/config.js'
 import { hashIp } from '../server/crypto/hashid.js'
 import { closeDb, getDb, DB_FILENAME } from '../server/db/index.js'
@@ -53,9 +58,6 @@ const USERNAME_PATTERN = /^[a-z0-9][a-z0-9._-]{2,31}$/i
 // выброшены O/0, I/l/1 и прочие пары, неразличимые в письме и в мессенджере:
 // временный пароль передают человеку голосом или текстом, и «не тот символ»
 // заканчивается ещё одной неудачной попыткой входа и блокировкой.
-const GENERATED_ALPHABET = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-const GENERATED_LENGTH = 24
-
 // Завершающий символ escape-последовательности терминала: у CSI ('ESC [ 1 ; 2 A')
 // это буква, у клавиш редактирования ('ESC [ 3 ~') — тильда. Всё, что до него,
 // относится к нажатой клавише, а не к паролю.
@@ -164,39 +166,6 @@ const requireUsername = (options) => {
 // ---------------------------------------------------------------------------
 // Пароль
 // ---------------------------------------------------------------------------
-
-const randomPassword = () => {
-  let password = ''
-  // randomInt из node:crypto, а не Math.random: последний предсказуем по
-  // нескольким выборкам, и «сгенерированный» пароль восстанавливался бы
-  // из соседних.
-  for (let i = 0; i < GENERATED_LENGTH; i += 1) {
-    password += GENERATED_ALPHABET[randomInt(GENERATED_ALPHABET.length)]
-  }
-  return password
-}
-
-/**
- * Сгенерированный пароль, заведомо проходящий validatePasswordStrength.
- *
- * Случайные 24 символа стойки сами по себе, но проверка смотрит не только
- * на энтропию: примерно один пароль из шестидесяти не содержит ни одной цифры,
- * и такой временный пароль пользователь получил бы, а сменить его на самого
- * себя не смог — форма отвергла бы его же собственным правилом.
- *
- * Перебор ограничен: при исправном алфавите хватает первой-второй попытки,
- * а бесконечный цикл на несовместимых правилах должен падать, а не висеть.
- */
-const generatePassword = (username) => {
-  for (let attempt = 0; attempt < 100; attempt += 1) {
-    const password = randomPassword()
-    if (validatePasswordStrength(password, username).ok) return password
-  }
-  throw new Error(
-    'не удалось сгенерировать пароль, проходящий проверку стойкости — ' +
-    'проверьте GENERATED_ALPHABET и validatePasswordStrength'
-  )
-}
 
 /**
  * Читает строку с терминала, ничего не печатая в ответ на нажатия.
@@ -386,14 +355,6 @@ const printTable = (headers, rows) => {
 // Команды
 // ---------------------------------------------------------------------------
 
-const SQL_INSERT_USER = `
-  INSERT INTO users (
-    username, password_hash, password_changed_at, must_change_password,
-    role, status, totp_required, created_at, updated_at
-  ) VALUES (?, ?, ?, 1, ?, 'active', 1, ?, ?)
-  RETURNING id
-`
-
 const createUser = async (db, options) => {
   const username = requireUsername(options)
 
@@ -408,22 +369,13 @@ const createUser = async (db, options) => {
   // «забыли указать роль» не должно означать «выдали полный доступ».
   const role = requested ?? (total === 0 ? 'owner' : 'viewer')
 
-  if (db.get('SELECT id FROM users WHERE username = ?', [username])) {
-    throw new Error(`пользователь "${username}" уже существует`)
-  }
+  const { password: given, generated } = await obtainPassword(username, options)
+  // Правила — общие с админкой (server/application/user-admin.js): занятый
+  // логин, форма логина, обязательная смена пароля и второй фактор.
+  const { user } = await createUserRecord(db, { username, role, password: given })
 
-  const { password, generated } = await obtainPassword(username, options)
-  const hash = await hashPassword(password)
-  const now = Date.now()
-
-  const { id } = db.get(SQL_INSERT_USER, [username, hash, now, role, now, now])
-
-  out(`создан пользователь #${id} ${username}, роль ${role}`)
-  if (generated) printGenerated(password)
-  // must_change_password и totp_required проставлены жёстко, без ключей
-  // командной строки: временный пароль знает не только его владелец (он прошёл
-  // через того, кто заводил учётку), а вход в админку без второго фактора
-  // держится на одном пароле, который к тому же временный.
+  out(`создан пользователь #${user.id} ${user.username}, роль ${user.role}`)
+  if (generated) printGenerated(given)
   note('При первом входе потребуется сменить пароль и подключить приложение-аутентификатор.')
 }
 
@@ -431,52 +383,18 @@ const resetPassword = async (db, options) => {
   const username = requireUsername(options)
   const user = findUser(db, username)
 
-  const { password, generated } = await obtainPassword(user.username, options)
-  const hash = await hashPassword(password)
-  const now = Date.now()
-
-  const revoked = db.transaction(() => {
-    db.run(
-      `UPDATE users
-          SET password_hash = ?, password_changed_at = ?, must_change_password = 1,
-              failed_attempts = 0, locked_until = NULL, lock_level = 0, updated_at = ?
-        WHERE id = ?`,
-      [hash, now, now, user.id]
-    )
-    // Старый пароль мог утечь — ради этого пароль и сбрасывают. Все сессии,
-    // выданные по нему, обязаны умереть вместе с ним, иначе смена пароля
-    // не выгоняет того, кто уже внутри.
-    return revokeAllForUser(db, user.id, { reason: 'password_change', now })
-  })
+  const { password: given, generated } = await obtainPassword(user.username, options)
+  const { revoked } = await resetPasswordRecord(db, { userId: user.id, password: given })
 
   out(`пароль пользователя ${user.username} заменён, сессий отозвано: ${revoked}`)
-  if (generated) printGenerated(password)
+  if (generated) printGenerated(given)
   note('Блокировка и счётчик неудачных попыток сброшены. При входе пароль нужно сменить.')
 }
 
 const resetTwoFactor = (db, options) => {
   const username = requireUsername(options)
   const user = findUser(db, username)
-  const now = Date.now()
-
-  const result = db.transaction(() => {
-    // Секрет удаляем, а не выдаём новый: подтвердить его всё равно нужно кодом
-    // из приложения, то есть при живом человеке за экраном. CLI знает только,
-    // что старый телефон потерян.
-    const secrets = db.run('DELETE FROM totp_secrets WHERE user_id = ?', [user.id]).changes
-    // Коды восстановления выпускались вместе со старым секретом и после его
-    // удаления открывают вход в обход второго фактора, которого больше нет.
-    const codes = db.run('DELETE FROM recovery_codes WHERE user_id = ?', [user.id]).changes
-    // CR-063. Незавершённое подключение (totp_pending) — такой же секрет, как
-    // подтверждённый: он ждёт лишь кода из приложения. Сброс, который его
-    // оставляет, отдаёт следующему входу секрет, выпущенный до потери телефона.
-    const pending = db.run('DELETE FROM totp_pending WHERE user_id = ?', [user.id]).changes
-    db.run('UPDATE users SET totp_required = 1, updated_at = ? WHERE id = ?', [now, user.id])
-    // Живая сессия пережила бы сброс и осталась бы подтверждённой вторым
-    // фактором, которого уже нет.
-    const revoked = revokeAllForUser(db, user.id, { reason: 'admin', now })
-    return { secrets, codes, pending, revoked }
-  })
+  const result = resetTwoFactorRecord(db, { userId: user.id })
 
   out(
     `2FA пользователя ${user.username} сброшена: секретов ${result.secrets}, ` +
@@ -741,6 +659,12 @@ try {
   if (error instanceof UsageError) {
     note(`Ошибка: ${error.message}\n`)
     note(usage())
+    process.exitCode = 2
+  } else if (error instanceof UserAdminError) {
+    // Отказ по правилу, а не сбой: занятый логин, последний владелец, слабый
+    // пароль. Стек и «причина нижнего уровня» здесь не помогут — помогает
+    // другой ввод, поэтому печатаем только причину и её код.
+    note(`Отказано: ${error.message} (${error.code})`)
     process.exitCode = 2
   } else {
     note(`Ошибка: ${error.message}`)

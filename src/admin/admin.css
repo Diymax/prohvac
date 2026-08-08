@@ -1569,3 +1569,62 @@
   font-size: clamp(20px, 3vw, 28px);
   overflow-wrap: anywhere;
 }
+
+/* --- раздел «Пользователи» --- */
+
+.adm-users {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.adm-user__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.adm-user__name {
+  font-size: 15px;
+}
+
+.adm-user__meta {
+  margin: 6px 0 12px;
+}
+
+.adm-user__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* Закрытый доступ красным не помечаем: это не поломка, а решение владельца.
+   Красный здесь соседствовал бы с «не доставлено» и читался бы как авария. */
+.adm-badge--disabled {
+  color: var(--adm-muted);
+  border-color: var(--adm-line);
+}
+
+/* Пароль показывается один раз, поэтому он должен читаться с экрана без
+   ошибок: моноширинный шрифт и разрядка отличают 0 от O и 1 от l. */
+.adm-users__password {
+  display: block;
+  margin: 8px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  background: var(--adm-surface);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  user-select: all;
+  overflow-wrap: anywhere;
+}
+
+.adm-users__password-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}

@@ -34,6 +34,8 @@ const SECTIONS = [
   // которой видно число заявок, вправе видеть и их источники.
   { id: 'analytics', title: 'Аналитика', capability: 'dashboard.read' },
   { id: 'settings', title: 'Настройки', capability: 'settings.manage' },
+  // Только владелец: капабилити users.manage роли admin не выдана намеренно.
+  { id: 'users', title: 'Пользователи', capability: 'users.manage' },
   { id: 'security', title: 'Безопасность', capability: 'security.self_manage' },
 ]
 

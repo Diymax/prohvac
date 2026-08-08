@@ -73,7 +73,9 @@ everything looks fine and the chat buttons silently do nothing. See
 
 The application runs through `app.cjs`. On startup it validates production
 configuration and applies pending migrations atomically. The first administrator
-is created with `node scripts/admin-cli.mjs create-user --username <name>`.
+is created with `node scripts/admin-cli.mjs create-user --username <name>`;
+every account after that is managed from the panel, in the "Пользователи"
+section, which only the `owner` role can open.
 
 ## Deployment
 

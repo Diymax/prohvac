@@ -12,6 +12,7 @@ import Leads from './Leads.jsx'
 import Media from './Media.jsx'
 import Overview from './Overview.jsx'
 import Settings from './Settings.jsx'
+import Users from './Users.jsx'
 
 const screens = [
   { id: 'overview', title: 'Обзор', Component: Overview },
@@ -21,6 +22,7 @@ const screens = [
   { id: 'leads', title: 'Заявки', Component: Leads },
   { id: 'analytics', title: 'Аналитика', Component: Analytics },
   { id: 'settings', title: 'Настройки', Component: Settings },
+  { id: 'users', title: 'Пользователи', Component: Users },
 ]
 
 export default screens

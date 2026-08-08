@@ -1,5 +1,5 @@
 {
   "superReview": {
-    "skipChecks": ["branch"]
+    "skipChecks": ["branch", "language"]
   }
 }

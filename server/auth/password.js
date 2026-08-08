@@ -13,7 +13,7 @@
 // не ломая старые записи: проверка идёт по параметрам из самой записи,
 // а needsRehash() подсказывает, когда пересчитать хеш после успешного входа.
 
-import { randomBytes, scrypt, timingSafeEqual } from 'node:crypto'
+import { randomBytes, randomInt, scrypt, timingSafeEqual } from 'node:crypto'
 
 // Текущие параметры. N — фактор стоимости (память и время), r — размер блока,
 // p — параллелизм. При росте железа поднимаем N; старые хеши продолжат работать.
@@ -329,4 +329,49 @@ export const validatePasswordStrength = (plain, username) => {
   if (isCommon(lowered)) return { ok: false, error: 'password_common' }
 
   return { ok: true }
+}
+
+// ---------------------------------------------------------------------------
+// Генерация временного пароля
+// ---------------------------------------------------------------------------
+
+// Похожие друг на друга символы исключены: временный пароль диктуют голосом
+// и переписывают с экрана, и 'l' против '1' здесь дороже пары бит энтропии.
+const GENERATED_ALPHABET = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+const GENERATED_LENGTH = 24
+
+const randomPassword = () => {
+  let password = ''
+  // randomInt из node:crypto, а не Math.random: последний предсказуем по
+  // нескольким выборкам, и «сгенерированный» пароль восстанавливался бы
+  // из соседних.
+  for (let i = 0; i < GENERATED_LENGTH; i += 1) {
+    password += GENERATED_ALPHABET[randomInt(GENERATED_ALPHABET.length)]
+  }
+  return password
+}
+
+/**
+ * Сгенерированный пароль, заведомо проходящий validatePasswordStrength.
+ *
+ * Случайные 24 символа стойки сами по себе, но проверка смотрит не только
+ * на энтропию: примерно один пароль из шестидесяти не содержит ни одной цифры,
+ * и такой временный пароль пользователь получил бы, а сменить его на самого
+ * себя не смог — форма отвергла бы его же собственным правилом.
+ *
+ * Перебор ограничен: при исправном алфавите хватает первой-второй попытки,
+ * а бесконечный цикл на несовместимых правилах должен падать, а не висеть.
+ *
+ * @param {string} [username] логин будущего владельца пароля, если он известен
+ * @returns {string}
+ */
+export const generatePassword = (username) => {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const password = randomPassword()
+    if (validatePasswordStrength(password, username).ok) return password
+  }
+  throw new Error(
+    'не удалось сгенерировать пароль, проходящий проверку стойкости — ' +
+    'проверьте GENERATED_ALPHABET и validatePasswordStrength'
+  )
 }
